@@ -1,0 +1,22 @@
+
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+#ByEmployeeTable  {
+  td {
+    max-width: 100px;
+  }
+  tr:not(:last-child) {
+    height: 100px;
+  }
+}
+
+.sticky {
+  min-height: 90px;
+}
