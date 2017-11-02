@@ -1,11 +1,15 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use App\Rules\within24hrs;
-use App\Schedule;
+namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
+use App\Schedule;
 
 class ScheduleController extends Controller
 {
+    public function __construc() {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -13,6 +17,7 @@ class ScheduleController extends Controller
      */
     public function index()
     {
+        //
     }
 
     /**
@@ -22,6 +27,7 @@ class ScheduleController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
@@ -32,45 +38,7 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $req = array_merge($request->all(), [
-            'date_range' => [
-                "date_from" => trim("{$request->start_date} {$request->start_time}"),
-                "date_to" => trim("{$request->end_date} {$request->end_time}"),
-        ]]);
-
-        $request = new Request($req);
-        
-		$this->validate(
-			$request, [
-                'employees' => 'required',
-                'job' => 'required',
-                'task' => 'required',
-                'notes' => 'max:500',
-                'file' => 'mimes:pdf,doc,docx',
-				'date_range.date_from'  => 'required',
-				'date_range.date_to'  => 'required',
-				'date_range'  => new within24hrs,
-			]
-        );
-        
-
-        $employees = explode(",", $request->employees);
-        collect($employees)->map(function ($employee) use ($request) {
-            $schedule = new Schedule;
-            $schedule->user_id = $employee;
-            $schedule->start_date = $request->start_date;
-            $schedule->start_time = $request->start_time;
-            $schedule->end_date = $request->end_date;
-            $schedule->end_time = $request->end_time;
-            $schedule->job = $request->job;
-            $schedule->task = $request->task;
-            $schedule->notes = $request->notes;
-            $schedule->file = $request->file;
-
-            $schedule->save();
-        });
-        
-        return back()->with('status', 'Added new schedule!');
+        //
     }
 
     /**
@@ -113,8 +81,10 @@ class ScheduleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Schedule $schedule)
     {
-        //
+        $schedule->delete();
+
+        return back()->with('status', 'schedule successfully deleted');
     }
 }

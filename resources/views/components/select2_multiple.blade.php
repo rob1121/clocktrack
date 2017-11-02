@@ -12,7 +12,6 @@
 
 @push('script')
 <script>
-  
   $(document).ready(function() {
     $('#{{$id}}').select2({
       placeholder: 'Select Employee',

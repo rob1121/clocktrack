@@ -15,7 +15,7 @@ return array(
     'App\\Http\\Controllers\\Auth\\ResetPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ResetPasswordController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
-    'App\\Http\\Controllers\\ScheduleController' => $baseDir . '/app/Http/Controllers/ScheduleController.php',
+    'App\\Http\\Controllers\\TimeSheet\\ByEmployeeController' => $baseDir . '/app/Http/Controllers/Timesheet/ByEmployeeController.php',
     'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => $baseDir . '/app/Http/Controllers/Timesheet/TimesheetController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',

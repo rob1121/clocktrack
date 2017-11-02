@@ -77,7 +77,7 @@ class TimesheetController extends Controller
             'employeeOptions' => User::all(),
             'users' => $users,
             'schedules' => $schedules,
-            'week' => (object)$week,
+            'week' => $week,
         ]);
     }
     
@@ -91,7 +91,6 @@ class TimesheetController extends Controller
         $breaktimeOptions = [];
         $date = Carbon::now()->startOfDay();
         $endOfDate = Carbon::now()->endOfDay();
-
         while ($endOfDate->diffInMinutes($date) > 0) {
             $breaktimeOptions[] =(object) [
                 'value' => $date->format(config('constant.timeFormat')),
@@ -100,8 +99,14 @@ class TimesheetController extends Controller
             $date->addMinutes(15);
         }
 
+        $employeeOptions = User::all()->map(function($employee) {
+            return (object)[
+                'value' => $employee->id,
+                'text' => $employee->fullname,
+            ];
+        });
         return view('timesheets.create', [
-            'employeeOptions' => User::all(),
+            'employeeOptions' => $employeeOptions,
             'jobOptions' => Job::selectOptions(),
             'taskOptions' => Task::selectOptions(),
             'breaktimeOptions' => $breaktimeOptions,
@@ -205,7 +210,6 @@ class TimesheetController extends Controller
      */
     public function show($id)
     {
-        //
     }
 
     /**

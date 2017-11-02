@@ -17,4 +17,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::resource('/timesheet', 'Timesheet\TimesheetController');
+Route::get('/timesheet/employee/{user}', 'Timesheet\ByEmployeeController@index')->name('timesheet.by_employee');
+
+Route::resource('timesheet','Timesheet\TimesheetController');
+Route::resource('schedule', 'ScheduleController', ['only' => [
+    'destroy'    
+]]);

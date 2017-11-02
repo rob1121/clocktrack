@@ -50,13 +50,13 @@
     <div class="col-xs-5">
         <h1>
             @php 
-              Carbon::setWeekStartsAt(Carbon::SUNDAY);
-              Carbon::setWeekEndsAt(Carbon::SATURDAY);
-              $isNotNextMonth = Carbon::now()->endOfWeek()->format('M') === Carbon::now()->startOfWeek()->format('M');
+                $start = $week[0];
+                $end = $week[count($week)-1];
+                $isNotNextMonth = $start->format('M') === $end->format('M');
             @endphp
-            {{Carbon::now()->startOfWeek()->format('M d')}}
+            {{$start->format('M d')}}
             -
-            {{Carbon::now()->endOfWeek()->format($isNotNextMonth ? 'd Y' : 'M d Y')}}
+            {{$end->format($isNotNextMonth ? 'd Y' : 'M d Y')}}
         </h1>
     </div>
 

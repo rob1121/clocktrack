@@ -23,21 +23,19 @@
                                         $resultSet = $user->schedule->where('start_date', $day->format('Y-m-d'));
                                     @endphp
                                     @if($resultSet->isNotEmpty())
-                                        <div class="alert alert-warning">
-                                            <div class="sticky">
-                                            <a href="#" class="text-success">
-                                                <p>
+                                            <div class="alert alert-warning">
+                                                <div class="sticky">
+                                                <a href="{{route('timesheet.by_employee', ['user' => $user->id, 'date' => $day->format('Y-m-d')])}}" class="text-success">
                                                     <i class="fa fa-edit fa-2x"></i>
-                                                </p>
-                                            </a>
-                                            <h4>
-                                                {{minutesToHourMinuteFormat($resultSet->sum('duration_in_minutes'))}}
-                                                <small>hh:mm</small>
-                                            </h4>
-                                            <small>{{hourMinuteFormat($resultSet->first()->start_time)}} - {{hourMinuteFormat($resultSet->last()->end_time)}}</small>
-                                            <small>{{$resultSet->implode('job', ', ')}}</small>
+                                                </a>
+                                                <h4>
+                                                    {{minutesToHourMinuteFormat($resultSet->sum('duration_in_minutes'))}}
+                                                    <small>hh:mm</small>
+                                                </h4>
+                                                <small>{{hourMinuteFormat($resultSet->first()->start_time)}} - {{hourMinuteFormat($resultSet->last()->end_time)}}</small>
+                                                <small>{{$resultSet->implode('job', ', ')}}</small>
+                                                </div>
                                             </div>
-                                        </div>
                                     @endif
                                 </td>
                             @endforeach
