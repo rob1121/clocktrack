@@ -4,10 +4,20 @@
     <div class="container-fluid">
 
     <div class="row form-group">
+        <div class="col-xs-1">
+            <a 
+                href="{{route('timesheet.index')}}"
+                id="next"
+                class="btn btn-primary"
+            >
+                <span>Back</span>
+                <i class="fa fa-home"></i>
+            </a>
+        </div>
         <div class="col-xs-2">
             <div class="btn-group">
                 <a 
-                    href="{{route('timesheet.by_employee', [
+                    href="{{route('schedule.by_employee', [
                         'user' => $user->id, 
                         'date' => Carbon::parse(Request::get('date'))->modify('-1 day')->format('Y-m-d')
                     ])}}"
@@ -18,7 +28,7 @@
                     <span>Previous</span>
                 </a>
                 <a 
-                    href="{{route('timesheet.by_employee', [
+                    href="{{route('schedule.by_employee', [
                         'user' => $user->id, 
                         'date' => Carbon::parse(Request::get('date'))->modify('1 day')->format('Y-m-d')
                     ])}}"
@@ -30,9 +40,9 @@
                 </a>
             </div>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-1">
             <a 
-            href="{{route('timesheet.create')}}"
+            href="{{route('schedule.create')}}"
             id="next"
             class="btn btn-success"
             >
@@ -53,10 +63,10 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <div id="map" style="border:1px solid black;position: relative;left:0;right:0;bottom:0;top:0">adad</div>
+            <div id="map" style="border:1px solid black;position: relative;left:0;right:0;bottom:0;top:0"></div>
         </div>
         <div class="col-md-8">
-            @include('timesheets.by_employee.partials.table')
+            @include('schedules.by_employee.table')
         </div>
     </div>
     </div>

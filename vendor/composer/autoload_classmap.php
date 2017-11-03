@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\BreakTime' => $baseDir . '/app/BreakTime.php',
+    'App\\Clocktrack\\Option' => $baseDir . '/app/clocktrack/Option.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
@@ -14,8 +15,10 @@ return array(
     'App\\Http\\Controllers\\Auth\\RegisterController' => $baseDir . '/app/Http/Controllers/Auth/RegisterController.php',
     'App\\Http\\Controllers\\Auth\\ResetPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ResetPasswordController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
-    'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
-    'App\\Http\\Controllers\\TimeSheet\\ByEmployeeController' => $baseDir . '/app/Http/Controllers/Timesheet/ByEmployeeController.php',
+    'App\\Http\\Controllers\\DashboardController' => $baseDir . '/app/Http/Controllers/DashboardController.php',
+    'App\\Http\\Controllers\\Schedule\\ByEmployeeController' => $baseDir . '/app/Http/Controllers/Schedule/ByEmployeeController.php',
+    'App\\Http\\Controllers\\Schedule\\ByJobController' => $baseDir . '/app/Http/Controllers/Schedule/ByJobController.php',
+    'App\\Http\\Controllers\\Schedule\\ScheduleController' => $baseDir . '/app/Http/Controllers/Schedule/ScheduleController.php',
     'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => $baseDir . '/app/Http/Controllers/Timesheet/TimesheetController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',

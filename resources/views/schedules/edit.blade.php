@@ -16,8 +16,13 @@
 
       <div class="jumbotron">
         <div class="container">
-          <form class="form-horizontal" method="post" action="{{route('timesheet.store')}}">
+          <form 
+            class="form-horizontal" 
+            method="post" 
+            action="{{route('schedule.update',['schedule' => $schedule->id])}}"
+          >
             {{csrf_field()}}
+            {{ method_field('PUT') }}
             <div class="form-group">
             <label class="col-sm-2 control-label">When</label>
             <div class="col-sm-9">
@@ -29,7 +34,7 @@
                         name="start_date" 
                         id="start_date" 
                         placeholder="Start Date"
-                        value="{{old('start_date')}}"
+                        value="{{old('start_date', $schedule->start_date)}}"
                       >
                     </div>
 
@@ -37,6 +42,7 @@
                       @component('components.select', [
                         'options' => $breaktimeOptions,
                         'name' => 'start_time',
+                        'value' => old('start_time', $schedule->start_time),
                         'id' => 'start_time',
                       ])
                       @endcomponent
@@ -52,6 +58,7 @@
                       @component('components.select', [
                         'options' => $breaktimeOptions,
                         'name' => 'end_time',
+                        'value' => old('end_time', $schedule->end_time),
                         'id' => 'end_time',
                       ])
                       @endcomponent
@@ -63,23 +70,28 @@
                       name="end_date" 
                       id="end_date" 
                       placeholder="End Date"
-                        value="{{old('end_date')}}"
+                        value="{{old('end_date', $schedule->end_date)}}"
                       >
                     </div>
                 </div>
               </div>
             </div>
 
-            @component('components.break_time',['breaktimeOptions' => $breaktimeOptions])
+            @component('components.break_time',[
+              'breaktimeOptions' => $breaktimeOptions, 
+              'break_in' => array_filter(old('break_in', $schedule->breaktime->pluck('break_in')->toArray())),
+              'break_out' => array_filter(old('break_out', $schedule->breaktime->pluck('break_out')->toArray()))
+            ])
             @endcomponent
             
             <div class="form-group">
               <label class="col-sm-2 control-label">Employees</label>
               <div class="col-sm-9">
-                @component('components.select2_multiple', [
+                @component('components.select2', [
                   'options' => $employeeOptions, 
-                  'name' => 'employees', 
-                  'id' => 'select2Employees',
+                  'name' => 'employee', 
+                  'value' => old('employee', $schedule->user_id),
+                  'id' => 'employee',
                 ])
                 @endcomponent
               </div>
@@ -90,6 +102,7 @@
               <div class="col-sm-9">
                 @component('components.select2', [
                   'options' => $jobOptions, 
+                  'value' => old('job', $schedule->job),
                   'name' => 'job',
                   'id' => 'job'
                 ])
@@ -102,6 +115,7 @@
               <div class="col-sm-9">
               @component('components.select2', [
                 'options' => $taskOptions, 
+                  'value' => old('task', $schedule->task),
                 'name' => 'task',
                 'id' => 'task'
               ])
@@ -112,7 +126,7 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">Notes(Optional)</label>
               <div class="col-sm-9">
-                <textarea class="form-control" name="notes" id="notes" cols="30" rows="5">{{old('notes')}}</textarea>
+                <textarea class="form-control" name="notes" id="notes" cols="30" rows="5">{{old('notes', $schedule->notes)}}</textarea>
                 <small><span id="counter">500</span> characters remaining (500 maximum)</small>
               </div>
             </div>
@@ -126,8 +140,8 @@
 
             <div class="form-group">
               <div class="col-sm-9 col-sm-offset-2">
-                <button class="btn btn-primary">
-                  Add Time
+                <button type="submit" class="btn btn-primary">
+                  Update
                 </button>
                 <a class="btn btn-default" href={{route('timesheet.index')}}>
                   Cancel
@@ -141,5 +155,5 @@
   </div>
   <!-- end of hiddne components -->
 
-  @include('timesheets.partials.script_create')
+  @include('schedules.partials.script_create')
 @endsection

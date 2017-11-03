@@ -38,12 +38,12 @@
 
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="#">
+                                <a href="{{route('timesheet.index')}}">
                                     View Time Sheets
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{route('dashboard.index')}}">
                                     Who's Working Now?
                                 </a>
                             </li>

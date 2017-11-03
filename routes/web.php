@@ -17,9 +17,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/timesheet/employee/{user}', 'Timesheet\ByEmployeeController@index')->name('timesheet.by_employee');
 
-Route::resource('timesheet','Timesheet\TimesheetController');
-Route::resource('schedule', 'ScheduleController', ['only' => [
-    'destroy'    
-]]);
+
+Route::get('/schedule/employee/{user}', 'Schedule\ByEmployeeController@index')->name('schedule.by_employee');
+Route::get('/schedule/job/{job}', 'Schedule\ByJobController@index')->name('schedule.by_job');
+Route::resource('schedule', 'Schedule\ScheduleController');
+Route::resource('dashboard', 'DashboardController', ['only' => ['index']]);
+Route::resource('timesheet','Timesheet\TimesheetController', ['only' => ['index']]);

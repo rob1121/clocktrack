@@ -2,7 +2,7 @@
     <div class="col-xs-12 col-md-5">
         <div class="form-inline form-group">
             <div class="form-group">
-                <a class="btn btn-success" href="{{route('timesheet.create')}}">
+                <a class="btn btn-success" href="{{route('schedule.create')}}">
                     <i class="fa fa-plus"></i>
                     <span>Add Time</span>
                 </a>

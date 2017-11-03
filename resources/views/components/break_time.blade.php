@@ -17,7 +17,7 @@
     <div class="col-sm-5"  style="padding: 0">
       <div class="col-sm-6 col-sm-offset-6"  style="padding: 0;margin-bottom: 10px">
       @component('components.select', [
-        'value' => old('break_in'),
+        'value' => '',
         'options' => $breaktimeOptions, 
         'name' => 'break_in[]',
         'id' => 'break_in',
@@ -28,7 +28,7 @@
     <div class="col-sm-5 col-sm-offset-2"  style="padding: 0;margin-bottom: 10px">
       <div class="col-sm-6"  style="padding: 0">
         @component('components.select', [
-          'value' => old('break_out'),
+          'value' => '',
           'options' => $breaktimeOptions, 
           'name' => 'break_out[]',
           'id' => 'break_out',
@@ -45,15 +45,13 @@
 </div>
 
 @php
-  $break_ins = old('break_in') ? array_filter(old('break_in')) : [];
-  $break_outs = old('break_out') ? array_filter(old('break_out')) : [];
-
-  $breakTimeCountentCount = max([count($break_ins), count($break_outs)]);
+  $breakTimeCountentCount = max([count($break_in), count($break_out)]);
 @endphp
 
 @push('script')
 <script>
   $(document).ready(function() {
+    console.log(@json($breakTimeCountentCount), @json($break_in));
     var breaktimeComponentCount = {{$breakTimeCountentCount}};
 @for($counter = 0; 
     $counter < $breakTimeCountentCount;
@@ -62,8 +60,8 @@
   var parent = $('#addBreakBtn').closest('div');
   if(parent.attr('class') !== 'col-md-9 col-sm-offset-2') parent.addClass('col-sm-offset-2');
   var breakComponent = $('#breakTimeSelectContainer>.break-select-container').clone();
-  breakComponent.find('#break_in').val("{{isset($break_ins[$counter]) ? $break_ins[$counter] : ''}}");
-  breakComponent.find('#break_out').val("{{isset($break_outs[$counter]) ? $break_outs[$counter] : ''}}");
+  breakComponent.find('#break_in').val("{{Carbon::parse($break_in[$counter])->format('H:i:s')}}");
+  breakComponent.find('#break_out').val("{{Carbon::parse($break_out[$counter])->format('H:i:s')}}");
   var comp = breakComponent.appendTo('#breakContainer');
 @endfor
 

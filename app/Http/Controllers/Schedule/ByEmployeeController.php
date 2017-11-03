@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers\TimeSheet;
+<?php namespace App\Http\Controllers\Schedule;
 
 use App\Rules\within24hrs;
 use App\Schedule;
@@ -22,6 +22,6 @@ class ByEmployeeController extends Controller
             $query->where('start_date', $request->date)->get();
         }]);
 
-        return view('timesheets.by_employee.index', ['user' => $user]);
+        return view('schedules.by_employee.index', ['user' => $user]);
     }
 }

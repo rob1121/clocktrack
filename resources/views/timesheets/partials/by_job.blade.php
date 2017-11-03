@@ -32,7 +32,7 @@
                                         @if($resultSet->isNotEmpty())
                                             <div class="alert alert-warning">
                                                 <div class="sticky">
-                                                <a href="#" class="text-success">
+                                                <a href="{{route('schedule.by_job', ['job' => $schedule->job, 'date' => $day->format('Y-m-d')])}}" class="text-success">
                                                     <p>
                                                         <i class="fa fa-edit fa-2x"></i>
                                                     </p>

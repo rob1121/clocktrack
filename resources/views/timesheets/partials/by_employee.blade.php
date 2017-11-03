@@ -25,7 +25,7 @@
                                     @if($resultSet->isNotEmpty())
                                             <div class="alert alert-warning">
                                                 <div class="sticky">
-                                                <a href="{{route('timesheet.by_employee', ['user' => $user->id, 'date' => $day->format('Y-m-d')])}}" class="text-success">
+                                                <a href="{{route('schedule.by_employee', ['user' => $user->id, 'date' => $day->format('Y-m-d')])}}" class="text-success">
                                                     <i class="fa fa-edit fa-2x"></i>
                                                 </a>
                                                 <h4>

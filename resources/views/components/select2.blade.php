@@ -22,8 +22,8 @@
           placeholder: 'Select  Job',
           width: '100%',
       });
-
-      $('#{{$id}}').val('{{old($name)}}').trigger('change');
+      
+      $('#{{$id}}').val('{{$value}}').trigger('change');
   });
 </script>
 @endpush

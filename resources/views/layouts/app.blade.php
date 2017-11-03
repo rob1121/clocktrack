@@ -12,7 +12,6 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="https://bootswatch.com/spacelab/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     
   <!-- select2 -->
@@ -25,7 +24,7 @@
 </head>
 <body style="overflow-y: scroll">
     @include('layouts.nav')
-    <div id="wrapper"  hidden>
+    <div id="wrapper" >
         @yield('content')
         <footer>
             <hr/>
@@ -44,10 +43,5 @@
     <!-- datepicker -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js"></script>  
     @stack('script')
-    <script>
-        $('document').ready(function() {
-            $('#wrapper').fadeIn();
-        })
-    </script>
 </body>
 </html>

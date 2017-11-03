@@ -22,8 +22,9 @@
       $('#{{$name}}').val($('#{{$id}}').select2('val'));
     });
 
-    @if(old($name))
-      var val = @json(old($name));
+    @if($value)
+      var val = "{{$value}}";
+      
       $('#{{$id}}').val(val.split(',')).trigger('change');
     @endif
   });

@@ -336,6 +336,7 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
 
     public static $classMap = array (
         'App\\BreakTime' => __DIR__ . '/../..' . '/app/BreakTime.php',
+        'App\\Clocktrack\\Option' => __DIR__ . '/../..' . '/app/clocktrack/Option.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
@@ -343,8 +344,10 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
-        'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
-        'App\\Http\\Controllers\\TimeSheet\\ByEmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Timesheet/ByEmployeeController.php',
+        'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
+        'App\\Http\\Controllers\\Schedule\\ByEmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ByEmployeeController.php',
+        'App\\Http\\Controllers\\Schedule\\ByJobController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ByJobController.php',
+        'App\\Http\\Controllers\\Schedule\\ScheduleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ScheduleController.php',
         'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => __DIR__ . '/../..' . '/app/Http/Controllers/Timesheet/TimesheetController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',

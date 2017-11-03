@@ -32,11 +32,4 @@ class Schedule extends Model
         
         return $minutesLength - $this->breaktime->sum('duration_in_minutes');
     }
-
-    public static function fetchByDateRange(Carbon $from, Carbon $to) {
-        return static::whereBetween('start_date', [
-            $from->format('Y-m-d'), 
-            $to->format('Y-m-d')
-        ])->get();
-    }
 }

@@ -1,6 +1,10 @@
-@if (session('status'))
+@if (session('deleted'))
     @component('components.alert', ['title' => 'Schedule Deleted', 'icon' => 'check-circle', 'type' => 'success' ])
-    <p>{{session('status')}}</p>
+    <p>{{session('deleted')}}</p>
+    @endcomponent
+@elseif (session('updated'))
+    @component('components.alert', ['title' => 'Schedule Updated', 'icon' => 'check-circle', 'type' => 'success' ])
+    <p>{{session('updated')}}</p>
     @endcomponent
 @endif
 
@@ -26,9 +30,9 @@
                       <td>{{$schedule->task}}</td>
                       <td>{{minutesToHourMinuteFormat($schedule->duration_in_minutes)}}</td>
                       <td>
-                      <button class="btn btn-primary btn-xs">
+                      <a href="{{route('schedule.edit', ['schedule' => $schedule->id])}}" class="btn btn-primary btn-xs">
                           <i class="fa fa-edit"></i>
-                      </button>
+                      </a>
                       @component('components.delete_button', [
                         'model' => 'schedule',
                         'modelId' => $schedule->id,
