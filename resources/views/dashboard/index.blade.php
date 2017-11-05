@@ -7,9 +7,33 @@
           <div class="panel-heading">
           Who's Working Now ?
           </div>
-          <div class="panel-body">
-            No employees are clocked in
-          </div>
+            @if($active->isEmpty())
+                <div class="panel-body" style="min-height: 500px">
+                    No employees are clocked in
+                </div>
+            @else  
+                @foreach($active as $schedule)
+                <div class="list-group">
+                    <a href="#" class="list-group-item">
+                        <strong>{{$schedule->user->fullname}}</strong>
+                        <form action="{{route('dashboard.force_clockout', ['schedule' => $schedule->id])}}" method="POST">
+                            {{csrf_field()}}
+                            <button type="submit" class="btn btn-xs btn-default pull-right">
+                                <i class="fa fa-remove"></i>
+                            </button>
+                        </form>
+                        <p>
+                            <small>{{Carbon::parse($schedule->start_datetime)->diffForHumans()}}</small>
+                            <br/>
+                            <small>{{$schedule->job}}</small>
+                            <br/>
+                            <small>{{$schedule->task}}</small>
+                        </p>
+                    </a>
+                </div>
+                
+                @endforeach
+            @endif
         </div>
       </div>
       <div class="col-md-8">
@@ -17,7 +41,7 @@
           <div class="panel-heading">
             Clocktrack Locations
           </div>
-          <div id="map" style="border:1px solid black;position: relative;left:0;right:0;bottom:0;top:0"></div>
+          <div id="map"></div>
         </div>
         </div>
     </div>
@@ -31,11 +55,11 @@
  $(document).ready(function () {
     var map = new GMaps({
         div: '#map',
-        lat: 51.5073346,
-        lng: -0.1276831,
+        lat: 0,
+        lng: 0,
         width: '100%',
         height: '500px',
-        zoom: 12,
+        zoom: 2,
         zoomControl: true,
         zoomControlOpt: {
             style: 'SMALL',
@@ -44,17 +68,16 @@
         panControl: false
     });
 
-    GMaps.geolocate({
-        success: function(position) {
-            map.setCenter(position.coords.latitude, position.coords.longitude);
-        },
-        error: function(error) {
-            alert('Geolocation failed: '+error.message);
-        },
-        not_supported: function() {
-            alert("Your browser does not support geolocation");
-        }
-    });
+    @foreach($active as $employee)
+        map.addMarker({
+            lat: @json($employee->lat),
+            lng: @json($employee->lng),
+            title: @json($employee->user->fullname),
+            click: function(e) {
+                alert("Employee: {{$employee->user->fullname}}\n\n\nJob: {{$employee->job}}\nTask: {{$employee->task}}");
+            }
+        });
+    @endforeach
 });
 </script>
 @endpush

@@ -25,6 +25,9 @@
                                     @if($resultSet->isNotEmpty())
                                             <div class="alert alert-warning">
                                                 <div class="sticky">
+                                                @if($resultSet->pluck('breaktime')->filter(function($bt) { return $bt->isNotEmpty();})->isNotEmpty())
+                                                    <p><i class="fa fa-cutlery fa-2x"></i></p>
+                                                @endif
                                                 <a href="{{route('schedule.by_employee', ['user' => $user->id, 'date' => $day->format('Y-m-d')])}}" class="text-success">
                                                     <i class="fa fa-edit fa-2x"></i>
                                                 </a>

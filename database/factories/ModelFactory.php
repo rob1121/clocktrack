@@ -17,9 +17,13 @@ $factory->define(App\Schedule::class, function (Faker\Generator $faker) {
         'end_time' => $dates->modify('8 hours')->format('H:i:s'),
         'end_date' => $dates->format('Y-m-d'),
         'job' => $faker->sentence(3),
+        'job_description' => $faker->sentence(5),
         'task' => $faker->sentence(3),
         'notes' => $faker->paragraph,
         'file' => $faker->word,
+        'active' => 0,
+        'lat' => 0,
+        'lng' => 0,
     ];
 });
 

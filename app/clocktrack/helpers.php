@@ -35,3 +35,22 @@ function breakTimeFormat($in, $out, Carbon $start, Carbon $end) {
     'out' => $breakOut,
   ];
 }
+
+function logDateTimeFormat($datetime) {
+  $retVal = null;
+  if($datetime) 
+  {
+      $retVal = Carbon::parse($datetime)->format('D m/d');
+      $retVal .= " @ ";
+      $retVal .= Carbon::parse($datetime)->format('H:i a');
+  }
+  return $retVal;
+}
+
+function convertSecondsToTime($seconds) {
+  return (object)[
+    'hours' => floor($seconds / 3600),
+    'minutes' => floor(($seconds / 60) % 60),
+    'seconds' => $seconds % 60,
+  ];
+}

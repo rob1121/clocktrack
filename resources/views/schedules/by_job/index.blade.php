@@ -18,7 +18,7 @@
             <div class="btn-group">
                 <a 
                     href="{{route('schedule.by_job', [
-                        'user' => $schedules->first()->job, 
+                        'job' => Request::get('job'), 
                         'date' => Carbon::parse(Request::get('date'))->modify('-1 day')->format('Y-m-d')
                     ])}}"
                     id="prev"
@@ -29,7 +29,7 @@
                 </a>
                 <a 
                     href="{{route('schedule.by_job', [
-                        'user' => $schedules->first()->job, 
+                        'job' => Request::get('job'), 
                         'date' => Carbon::parse(Request::get('date'))->modify('1 day')->format('Y-m-d')
                     ])}}"
                     id="next"
@@ -53,7 +53,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <h1>{{strtoupper($schedules->first()->job)}}</h1>
+            <h1>{{strtoupper(Request::get('job'))}}</h1>
         </div>
     </div>
     <div class="row">

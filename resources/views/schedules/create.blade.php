@@ -121,8 +121,12 @@
             <div class="form-group">
               <label class="col-sm-2 control-label">Notes(Optional)</label>
               <div class="col-sm-9">
-                <textarea class="form-control" name="notes" id="notes" cols="30" rows="5">{{old('notes')}}</textarea>
-                <small><span id="counter">500</span> characters remaining (500 maximum)</small>
+                @component('components.textarea',[
+                  'name' => 'notes', 
+                  'value' => old('notes'),
+                  'id' => 'notes',
+                ])
+                @endcomponent
               </div>
             </div>
 

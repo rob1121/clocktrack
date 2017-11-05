@@ -20,7 +20,15 @@ Auth::routes();
 
 
 Route::get('/schedule/employee/{user}', 'Schedule\ByEmployeeController@index')->name('schedule.by_employee');
-Route::get('/schedule/job/{job}', 'Schedule\ByJobController@index')->name('schedule.by_job');
+Route::get('/schedule/job', 'Schedule\ByJobController@index')->name('schedule.by_job');
 Route::resource('schedule', 'Schedule\ScheduleController');
+
+Route::get('timeclock/{user}/timesheet', 'TimeclockController@timesheet')->name('timeclock.timesheet');
+Route::get('timeclock/calendar', 'TimeclockController@calendar')->name('timeclock.calendar');
+
+Route::post('dashboard/{schedule}', 'DashboardController@forceClockout')->name('dashboard.force_clockout');
 Route::resource('dashboard', 'DashboardController', ['only' => ['index']]);
+Route::resource('breaktime', 'BreaktimeController', ['only' => ['store', 'update']]);
+Route::resource('timeclock', 'TimeclockController', ['only' => ['store', 'update']]);
 Route::resource('timesheet','Timesheet\TimesheetController', ['only' => ['index']]);
+Route::resource('shift','ShiftController');

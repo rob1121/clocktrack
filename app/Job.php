@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Job extends Model
 {
     protected $fillable = [
-        'title',
+        'title', 'number','description'
     ];
 
     public static function selectOptions() {

@@ -8,9 +8,9 @@ trait Option {
   public static function employeesWithSchedule($from, $to, $employee = null) {
     $users = $employee ? User::where('id', $employee) : new User;
     $users = $users->with(['schedule' => function($query) use($from, $to) {
-        $query->whereBetween('start_date', [$from, $to]);
+        $query->with('breaktime')->whereBetween('start_date', [$from, $to]);
     }])->get();
-
+    
     return $users;
   }
 
@@ -41,9 +41,6 @@ trait Option {
 
   public static function daysIn(Carbon $start, Carbon $end) 
   {
-    Carbon::setWeekStartsAt(Carbon::SUNDAY);
-    Carbon::setWeekEndsAt(Carbon::SATURDAY);
-
     $date = clone $start;
     $week = [];
     $week[] = new Carbon($date);

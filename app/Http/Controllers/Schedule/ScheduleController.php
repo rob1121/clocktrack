@@ -18,16 +18,6 @@ class ScheduleController extends Controller
     public function __construc() {
         $this->middleware('auth');
     }
-    
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -85,7 +75,6 @@ class ScheduleController extends Controller
                 'job' => 'required',
                 'task' => 'required',
                 'notes' => 'max:500',
-                'file' => 'mimes:pdf,doc,docx',
                 'start_date' => 'required',
                 'start_time' => 'required',
                 'end_date' => 'required',
@@ -100,15 +89,18 @@ class ScheduleController extends Controller
         $employees = explode(",", $request->employees);
         collect($employees)->map(function ($employee) use ($request) {
             $schedule = new Schedule;
-            $schedule->user_id = $employee;
-            $schedule->start_date = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
-            $schedule->start_time = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
             $schedule->end_date = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
             $schedule->end_time = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
+            $schedule->start_date = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
+            $schedule->start_time = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
+            $schedule->user_id = $employee;
             $schedule->job = $request->job;
             $schedule->task = $request->task;
             $schedule->notes = $request->notes;
             $schedule->file = $request->file;
+            $schedule->active = isset($request->active) ? $request->active : 0;
+            $schedule->lng = isset($request->lng) ? $request->lng : '';
+            $schedule->lat = isset($request->lat) ? $request->lat : '';
 
             $schedule->save();
 
@@ -215,13 +207,14 @@ class ScheduleController extends Controller
 
 
         $schedule->user_id = $request->employee;
-        $schedule->start_date = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
-        $schedule->start_time = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
         $schedule->end_date = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
         $schedule->end_time = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
         $schedule->job = $request->job;
         $schedule->task = $request->task;
         $schedule->notes = $request->notes;
+        $schedule->active = 0;
+        $schedule->lng = isset($request->lng) ? $request->lng : '';
+        $schedule->lat = isset($request->lat) ? $request->lat : '';
         $schedule->file = $request->file;
 
         $schedule->save();

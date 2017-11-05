@@ -27,7 +27,7 @@ class Within24hrs implements Rule
     {
         $HOURS_IN_DAY = 24;
         $MINUTES_IN_HOUR = 60;
-
+        
         $start = Carbon::parse($value['date_from']);
         $end = Carbon::parse($value['date_to']);
 

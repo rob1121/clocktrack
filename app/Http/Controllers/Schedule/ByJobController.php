@@ -13,9 +13,9 @@ class ByJobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($job)
+    public function index()
     {
-        $schedules = Schedule::where('job', $job);
+        $schedules = Schedule::where('job', \Request::get('job'));
         $schedules->where('start_date', \Request::get('date'));
         
         return view('schedules.by_job.index', ['schedules' => $schedules->get()]);

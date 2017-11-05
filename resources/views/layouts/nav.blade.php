@@ -29,7 +29,7 @@
                     <li><a href="{{ route('login') }}">Login</a></li>
                     <li><a href="{{ route('register') }}">Register</a></li>
                 @else
-                    <li><a href="#">MY TIME CLOCK</a></li>
+                    <li><a href="{{route('timeclock.calendar')}}">MY TIME CLOCK</a></li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -50,7 +50,7 @@
                         </ul>
                     </li>
 
-                    <li><a href="#">SCHEDULES</a></li>
+                    <li><a href="{{route('shift.index')}}">SCHEDULES</a></li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
