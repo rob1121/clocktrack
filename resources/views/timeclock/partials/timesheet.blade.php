@@ -34,7 +34,7 @@
             </div>
         </div>
 </div>
-@if($schedules->isEmpty())
+@if($biometrics->isEmpty())
     <div class="row">
         <div class="col-md-12">
         <p id="noTimesheetFoundComponent"><i>No Time Sheet data to display</i></p>
@@ -61,29 +61,29 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($schedules as $schedule)
+        @foreach($biometrics as $biometric)
             <tr>
-                <td>{{$schedule->job}}</td>
-                <td>{{$schedule->task}}</td>
+                <td>{{$biometric->job}}</td>
+                <td>{{$biometric->task}}</td>
                 @foreach($week as $day)
                 <td>
-                    {{($day->format('D') === $schedule->date) ? minutesToHourMinuteFormat($schedule->duration) : '-'}}
+                    {{($day->format('D') === $biometric->date) ? minutesToHourMinuteFormat($biometric->duration) : '-'}}
                 </td>
                 @endforeach
-                <td>{{minutesToHourMinuteFormat($schedule->duration)}}</td>
+                <td>{{minutesToHourMinuteFormat($biometric->duration)}}</td>
             </tr>
         @endforeach
         <tr>
             <td colspan="2"></td>
             @foreach($week as $day)
                 @php
-                    $dailyTotal = $schedules->where('date', $day->format('D'))->sum('duration');
+                    $dailyTotal = $biometrics->where('date', $day->format('D'))->sum('duration');
                 @endphp
                 <td>
                     {{$dailyTotal ? minutesToHourMinuteFormat($dailyTotal): '-'}}
                 </td>
             @endforeach
-            <td>{{minutesToHourMinuteFormat($schedules->sum('duration'))}}</td>
+            <td>{{minutesToHourMinuteFormat($biometrics->sum('duration'))}}</td>
         </tr>
     </tbody>
     </table>

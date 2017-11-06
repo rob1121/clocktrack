@@ -17,7 +17,7 @@
                     </ul>
                 </div>
             @endif
-            @if(Auth::user()->schedule->isNotEmpty() && Auth::user()->schedule->last()->active)
+            @if(Auth::user()->biometric->isNotEmpty() && Auth::user()->biometric->last()->active)
               @include('timeclock.partials.clock_out')
             @else
               @include('timeclock.partials.clock_in')
@@ -39,7 +39,7 @@
       <div class="panel panel-default">
         <div class="panel-body">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="{{route('timeclock.calendar')}}">My Schedule</a></li>
+          <li class="active"><a href="{{route('timeclock.calendar')}}">My biometric</a></li>
           <li><a href="{{route('timeclock.timesheet', ['user' => Auth::user()->id])}}">My Timesheet</a></li>
         </ul>
           <br>

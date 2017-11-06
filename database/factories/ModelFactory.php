@@ -21,9 +21,6 @@ $factory->define(App\Schedule::class, function (Faker\Generator $faker) {
         'task' => $faker->sentence(3),
         'notes' => $faker->paragraph,
         'file' => $faker->word,
-        'active' => 0,
-        'lat' => 0,
-        'lng' => 0,
     ];
 });
 

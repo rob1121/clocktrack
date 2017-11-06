@@ -15,7 +15,7 @@ class CreateBreakTimesTable extends Migration
     {
         Schema::create('break_times', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('schedule_id')->unsigned();
+            $table->integer('biometric_id')->unsigned();
             $table->string('break_in')->nullable();
             $table->string('break_out')->nullable();
             $table->timestamps();

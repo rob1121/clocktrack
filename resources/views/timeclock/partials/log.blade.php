@@ -7,10 +7,10 @@
     </tr>
   </thead>
   <tbody>
-  @foreach(Auth::user()->schedule as $schedule)
+  @foreach(Auth::user()->biometric as $biometric)
     <tr>
-      <td>{{logDateTimeFormat($schedule->start_datetime)}}</td>
-      <td>{!!$schedule->active ? "<i>In progress..</i>" : logDateTimeFormat($schedule->end_datetime)!!}</td>
+      <td>{{logDateTimeFormat($biometric->time_in)}}</td>
+      <td>{!!$biometric->active ? "<i>In progress..</i>" : logDateTimeFormat($biometric->time_out)!!}</td>
     </tr>
   @endforeach
   </tbody>

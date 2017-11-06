@@ -26,9 +26,10 @@ Route::resource('schedule', 'Schedule\ScheduleController');
 Route::get('timeclock/{user}/timesheet', 'TimeclockController@timesheet')->name('timeclock.timesheet');
 Route::get('timeclock/calendar', 'TimeclockController@calendar')->name('timeclock.calendar');
 
-Route::post('dashboard/{schedule}', 'DashboardController@forceClockout')->name('dashboard.force_clockout');
+Route::post('dashboard/{biometric}', 'DashboardController@forceClockout')->name('dashboard.force_clockout');
 Route::resource('dashboard', 'DashboardController', ['only' => ['index']]);
 Route::resource('breaktime', 'BreaktimeController', ['only' => ['store', 'update']]);
 Route::resource('timeclock', 'TimeclockController', ['only' => ['store', 'update']]);
 Route::resource('timesheet','Timesheet\TimesheetController', ['only' => ['index']]);
-Route::resource('shift','ShiftController');
+Route::post('shift/store-batch','ShiftController@storeBatch')->name('shift.batch_Store');
+Route::resource('shift','ShiftController', ['only' => ['index']]);

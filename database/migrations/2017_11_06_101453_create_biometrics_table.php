@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSchedulesTable extends Migration
+class CreateBiometricsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,18 @@ class CreateSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('biometrics', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('start_date');
-            $table->string('start_time');
-            $table->string('end_date');
-            $table->string('end_time');
-            $table->string('notes')->nullable();
+            $table->string('time_in')->nullable();
+            $table->string('time_out')->nullable();
             $table->string('job');
             $table->string('task');
-            $table->string('job_description')->nullable();
+            $table->string('lat');
+            $table->string('lng');
             $table->string('file')->nullable();
-            $table->boolean('active')->default(true);
+            $table->boolean('active')->default(false);
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -37,6 +36,6 @@ class CreateSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('biometrics');
     }
 }

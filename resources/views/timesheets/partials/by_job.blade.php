@@ -6,7 +6,7 @@
             @endcomponent
         @endif
         
-        @if($schedules->isNotEmpty())
+        @if($biometrics->isNotEmpty())
             <div class="panel panel-default">
                 <table class="table table-bordered" id="ByEmployeeTable">
                     <thead>
@@ -19,20 +19,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach($schedules->unique('job') as $schedule)
+                    @foreach($biometrics->pluck('job') as $job)
                         <tr>
                             <td>
-                                <span>{{$schedule->job}}</span>
+                                <span>{{$job}}</span>
                             </td>
                                 @foreach($week as $day)
                                     <td>
                                         @php
-                                            $resultSet = $schedules->where('job', $schedule->job)->where('start_date', $day->format('Y-m-d'));
+                                            $resultSet = $biometrics->where('job', $job)->filter(function($bt) use($day) {
+                                                return str_contains($bt->time_in, $day->format('Y-m-d'));
+                                            });
                                         @endphp
                                         @if($resultSet->isNotEmpty())
                                             <div class="alert alert-warning">
                                                 <div class="sticky">
-                                                <a href="{{route('schedule.by_job', ['job' => str_slug($schedule->job, '-'), 'date' => $day->format('Y-m-d')])}}" class="text-success">
+                                                <a href="{{route('schedule.by_job', ['job' => str_slug($job, '-'), 'date' => $day->format('Y-m-d')])}}" class="text-success">
                                                     <p>
                                                         <i class="fa fa-edit fa-2x"></i>
                                                     </p>
@@ -41,7 +43,7 @@
                                                     {{minutesToHourMinuteFormat($resultSet->sum('duration_in_minutes'))}}
                                                     <small>hh:mm</small>
                                                 </h4>
-                                                <small>{{$resultSet->first()->start_time}} - {{$resultSet->last()->end_time}}</small>
+                                                <small>{{$resultSet->first()->time_in}} - {{$resultSet->last()->time_out}}</small>
                                                 <small>{{$resultSet->pluck('user.fullname_with_no_comma')->implode(', ')}}</small>
                                                 </div>
                                             </div>
@@ -53,7 +55,7 @@
                                         <div class="sticky">
                                             <h4>
                                                 {{
-                                                    minutesToHourMinuteFormat($schedules->where('job', $schedule->job)->sum('duration_in_minutes'))
+                                                    minutesToHourMinuteFormat($biometrics->where('job', $job)->sum('duration_in_minutes'))
                                                 }}
                                                 <small>hh:mm</small>
                                             </h4>
@@ -67,14 +69,16 @@
                             <td>Total</td>
                             @foreach($week as $day)
                                 @php
-                                $totalMinutes = $schedules->where('start_date', $day->format('Y-m-d'))->sum('duration_in_minutes');
+                                    $totalMinutes = $biometrics->filter(function($bt) use($day) {
+                                        return str_contains($bt->time_in, $day->format('Y-m-d'));
+                                    })->sum('duration_in_minutes');
                                 @endphp
                                 <td>
                                 <h4>{{$totalMinutes ? (minutesToHourMinuteFormat($totalMinutes) . ' hh:mm') : ''}}</h4>
                                 </td>
                             @endforeach
                             <td>
-                                <h4>{{minutesToHourMinuteFormat($schedules->sum('duration_in_minutes'))}} hh:mm</h4>
+                                <h4>{{minutesToHourMinuteFormat($biometrics->sum('duration_in_minutes'))}} hh:mm</h4>
                             </td>
                         </tr>
                     </tbody>

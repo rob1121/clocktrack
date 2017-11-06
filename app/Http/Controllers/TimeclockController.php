@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Schedule;
+use App\Biometric;
 use App\Job;
 use App\Task;
 use App\User;
@@ -19,12 +19,12 @@ class TimeclockController extends Controller
     
     public function calendar()
     {
-        $schedules = Auth::user()->schedule;
+        $biometrics = Auth::user()->biometric;
         return view('timeclock.index_calendar', [
-            'schedules' => $schedules->sortByDesc('end_datetime'),
+            'biometrics' => $biometrics->sortByDesc('end_datetime'),
             'jobOptions' => Job::selectOptions(),
             'taskOptions' => Task::selectOptions(),
-            'last_schedule' => Auth::user()->schedule->last(),
+            'last_biometric' => Auth::user()->biometric->last(),
         ]);
     }
 
@@ -43,24 +43,23 @@ class TimeclockController extends Controller
         $start = $start->startOfWeek();
         $end = $end->endOfWeek();
 
-        $schedules = Schedule::whereBetween('start_date', [$start->format('Y-m-d'), $end->format('Y-m-d')]);
-        $schedules = $schedules->where('user_id', $user->id)->get();
-
-        $schedules = $schedules->map(function($sched) use($user) {
+        $biometrics = Biometric::whereBetween('time_in', [$start->format('Y-m-d'), $end->format('Y-m-d')]);
+        $biometrics = $biometrics->where('user_id', $user->id)->get();
+        $biometrics = $biometrics->map(function($biometric) use($user) {
             return (object)[
-                'job' => $sched->job,
-                'task' => $sched->task,
-                'duration' => $sched->duration_in_minutes,
-                'date' => Carbon::parse($sched->start_date)->format('D'),
+                'job' => $biometric->job,
+                'task' => $biometric->task,
+                'duration' => $biometric->duration_in_minutes,
+                'date' => Carbon::parse($biometric->time_in)->format('D'),
             ];
         });
         
         return view('timeclock.index_timesheet',[
-            'schedules' => $schedules,
+            'biometrics' => $biometrics,
             'week' => Option::daysIn($start, $end),
             'jobOptions' => Job::selectOptions(),
             'taskOptions' => Task::selectOptions(),
-            'last_schedule' => Auth::user()->schedule->last(),
+            'last_biometric' => Auth::user()->biometric ? Auth::user()->biometric->last() : [],
         ]);
     }
 
@@ -80,29 +79,33 @@ class TimeclockController extends Controller
         
         $employees = explode(",", $request->employees);
         collect($employees)->map(function ($employee) use ($request) {
-            $schedule = new Schedule;
-            $schedule->end_date = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
-            $schedule->end_time = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
-            $schedule->start_date = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
-            $schedule->start_time = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
-            $schedule->user_id = $employee;
-            $schedule->job = $request->job;
-            $schedule->task = $request->task;
-            $schedule->notes = $request->notes;
-            $schedule->file = $request->file;
-            $schedule->active = isset($request->active) ? $request->active : 0;
-            $schedule->lng = isset($request->lng) ? $request->lng : '';
-            $schedule->lat = isset($request->lat) ? $request->lat : '';
+            $timeInDate = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
+            $timeInHours = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
 
-            $schedule->save();
+            $timeOutDate = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
+            $timeOutHours = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
+
+            $biometric = new Biometric;
+            $biometric->time_out = "{$timeOutDate} {$timeOutHours}";
+            $biometric->time_in = "{$timeInDate} {$timeInHours}";
+            $biometric->user_id = $employee;
+            $biometric->job = $request->job;
+            $biometric->task = $request->task;
+            $biometric->notes = $request->notes;
+            $biometric->file = $request->file;
+            $biometric->active = isset($request->active) ? $request->active : 0;
+            $biometric->lng = isset($request->lng) ? $request->lng : '';
+            $biometric->lat = isset($request->lat) ? $request->lat : '';
+
+            $biometric->save();
         });
         
-        return back()->with('status', 'Added new schedule!');
+        return back()->with('status', 'Added new biometric!');
             
     }
 
 
-    public function update($schedule, Request $request) {
+    public function update($biometric, Request $request) {
         $this->validate(
             $request, [
                 'notes' => 'max:500',
@@ -111,15 +114,17 @@ class TimeclockController extends Controller
             ]
         );
 
-        $schedule = Schedule::find($schedule);
-        $schedule->end_date = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
-        $schedule->end_time = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
-        $schedule->notes = $request->notes;
-        $schedule->active = 0;
-        $schedule->file = $request->file;
+        $timeOutDate = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
+        $timeOutHours = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
 
-        $schedule->save();
+        $biometric = Biometric::find($biometric);
+        $biometric->time_out = "{$timeOutDate} {$timeOutHours}";
+        $biometric->notes = $request->notes;
+        $biometric->active = 0;
+        $biometric->file = $request->file;
 
-        return back()->with('updated', "{$schedule->user->fullname} schedule successfully updated!");
+        $biometric->save();
+
+        return back()->with('updated', "{$biometric->user->fullname} biometric successfully updated!");
     }
 }

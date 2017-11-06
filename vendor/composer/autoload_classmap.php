@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Biometric' => $baseDir . '/app/Biometric.php',
     'App\\BreakTime' => $baseDir . '/app/BreakTime.php',
     'App\\Clocktrack\\Option' => $baseDir . '/app/clocktrack/Option.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',

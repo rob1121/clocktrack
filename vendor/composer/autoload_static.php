@@ -335,6 +335,7 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
     );
 
     public static $classMap = array (
+        'App\\Biometric' => __DIR__ . '/../..' . '/app/Biometric.php',
         'App\\BreakTime' => __DIR__ . '/../..' . '/app/BreakTime.php',
         'App\\Clocktrack\\Option' => __DIR__ . '/../..' . '/app/clocktrack/Option.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',

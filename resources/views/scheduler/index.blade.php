@@ -7,21 +7,6 @@
           <div class="panel-heading">
           Jobs
           </div>
-          
-
-		<!-- <div id='external-events'>
-			<h4>Draggable Events</h4>
-			<div class='fc-event'>My Event 1</div>
-			<div class='fc-event'>My Event 2</div>
-			<div class='fc-event'>My Event 3</div>
-			<div class='fc-event'>My Event 4</div>
-			<div class='fc-event'>My Event 5</div>
-			<p>
-				<input type='checkbox' id='drop-remove' />
-				<label for='drop-remove'>remove after drop</label>
-			</p>
-		</div> -->
-
           <div class="list-group" id='external-events'>
           </div>
         </div>
@@ -232,13 +217,34 @@
 				events: jsonUrl,
 				drop: function(date, jsEvent, ui, resourceId) {
 					// console.log($(this).data('event'));
-					// console.log('drop', date.format(), resourceId, ui, jsEvent.target);
+
+					console.log($('calendar').fullCalendar( 'getEventResource', resourceId ));
 				},
 				eventReceive: function(event) { // called when a proper external event is dropped
-					console.log(event);
+    		var resourceTitle = $("#calendar").fullCalendar("getResourceById",event.resourceId);
+					// console.log(resourceTitle.title);
+					console.log(resourceTitle.color);
+					$.ajax({
+            url: @json(route('shift.batch_Store')),
+            beforeSend: function(xhr){
+              xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
+            },
+            data: {
+							items: JSON.stringify( $('#calendar').fullCalendar( 'clientEvents').map(function(e) {
+								return {
+										start: e.start,
+										end: e.end,
+										title: e.title
+								};
+						}))
+						},
+						dataType: 'JSON',
+            type: 'POST',
+          });
 				},
 				eventDrop: function(event) { // called when an event (already on the calendar) is moved
-					console.log('eventDrop', event);
+    		var resourceTitle = $("#calendar").fullCalendar("getResourceById",event.resourceId);
+					console.log(resourceTitle.title);
 				}
 			});
 		}

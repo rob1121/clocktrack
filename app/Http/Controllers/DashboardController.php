@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Schedule; 
+use App\Biometric; 
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -15,18 +15,18 @@ class DashboardController extends Controller
     public function index()
     {
         return view('dashboard.index', [
-            'active' => Schedule::active(),
+            'active' => Biometric::active(),
         ]);
     }
 
-    public function forceClockout(Schedule $schedule) {
+    public function forceClockout(Biometric $biometric) {
 
         //TODO: notify user via email
-        $schedule->end_date = Carbon::now()->format(config('constant.dateFormat'));
-        $schedule->end_time = Carbon::now()->format(config('constant.timeFormat'));
-        $schedule->active = 0;
+        $biometric->end_date = Carbon::now()->format(config('constant.dateFormat'));
+        $biometric->end_time = Carbon::now()->format(config('constant.timeFormat'));
+        $biometric->active = 0;
 
-        $schedule->save();
+        $biometric->save();
 
         return back();
     }

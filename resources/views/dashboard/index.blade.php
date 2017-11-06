@@ -12,22 +12,22 @@
                     No employees are clocked in
                 </div>
             @else  
-                @foreach($active as $schedule)
+                @foreach($active as $biometric)
                 <div class="list-group">
                     <a href="#" class="list-group-item">
-                        <strong>{{$schedule->user->fullname}}</strong>
-                        <form action="{{route('dashboard.force_clockout', ['schedule' => $schedule->id])}}" method="POST">
+                        <strong>{{$biometric->user->fullname}}</strong>
+                        <form action="{{route('dashboard.force_clockout', ['biometric' => $biometric->id])}}" method="POST">
                             {{csrf_field()}}
                             <button type="submit" class="btn btn-xs btn-default pull-right">
                                 <i class="fa fa-remove"></i>
                             </button>
                         </form>
                         <p>
-                            <small>{{Carbon::parse($schedule->start_datetime)->diffForHumans()}}</small>
+                            <small>{{Carbon::parse($biometric->time_in)->diffForHumans()}}</small>
                             <br/>
-                            <small>{{$schedule->job}}</small>
+                            <small>{{$biometric->job}}</small>
                             <br/>
-                            <small>{{$schedule->task}}</small>
+                            <small>{{$biometric->task}}</small>
                         </p>
                     </a>
                 </div>

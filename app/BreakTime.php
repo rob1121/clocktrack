@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class BreakTime extends Model
 {
     protected $fillable = [
-        'schedule_id',
+        'biometric_id',
         'break_in',
         'break_out',
     ];
@@ -19,7 +19,7 @@ class BreakTime extends Model
     ];
     
     public function schedule() {
-        return $this->belongsTo(Schedule::class);
+        return $this->belongsTo(Biometric::class);
     }
     
     public function getDurationInMinutesAttribute() {

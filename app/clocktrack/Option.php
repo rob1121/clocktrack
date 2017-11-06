@@ -1,19 +1,10 @@
 <?php namespace App\Clocktrack;
 
-use App\Schedule;
+use App\Biometric;
 use App\User;
 use Carbon\Carbon;
 
 trait Option {
-  public static function employeesWithSchedule($from, $to, $employee = null) {
-    $users = $employee ? User::where('id', $employee) : new User;
-    $users = $users->with(['schedule' => function($query) use($from, $to) {
-        $query->with('breaktime')->whereBetween('start_date', [$from, $to]);
-    }])->get();
-    
-    return $users;
-  }
-
   public static function employees() {
     return User::all()->map(function($employee) {
         return (object)[
@@ -23,20 +14,20 @@ trait Option {
     });
   }
 
-  public static function schedules($from, $to, $user = null) 
+  public static function biometrics($from, $to, $user = null) 
   {
-    $schedules = new Schedule;
+    $biometric = new Biometric;
     
     if($user) {
       $user = User::where('id', $user);
-      $schedules = $user->with(['schedule' => function($query) use($from, $to) {
-        $query->whereBetween('start_date', [$from, $to]);
-      }])->first()->schedule;
+      $biometric = $user->with(['biometric' => function($query) use($from, $to) {
+        $query->whereBetween('time_in', [$from, $to]);
+      }])->first()->biometric;
     } else {
-        $schedules = $schedules->whereBetween('start_date', [$from, $to])->get();
+        $biometric = collect($biometric->whereBetween('time_in', [$from, $to])->get());
     }
 
-    return $schedules;
+    return $biometric;
   }
 
   public static function daysIn(Carbon $start, Carbon $end) 

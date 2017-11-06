@@ -20,9 +20,6 @@ class Schedule extends Model
         'notes',
         'file',
         'job_description',
-        'active',
-        'lng',
-        'lat'
     ];
 
     protected $appends = [
@@ -31,10 +28,6 @@ class Schedule extends Model
 
     public function user() {
         return $this->belongsTo(User::class);
-    }
-
-    public function breaktime() {
-        return $this->hasMany(BreakTime::class);
     }
     
     public function getDurationInMinutesAttribute() {
@@ -61,9 +54,5 @@ class Schedule extends Model
             $date = "{$this->end_date} {$this->end_time}";
         }
         return $date;
-    }
-
-    public function scopeActive($query) {
-        return $query->where('active', true)->get();
     }
 }

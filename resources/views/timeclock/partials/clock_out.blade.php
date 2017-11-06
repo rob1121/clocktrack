@@ -1,4 +1,4 @@
-@if(Auth::user()->schedule->isnotEmpty())
+@if(Auth::user()->biometric->isnotEmpty())
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <div class="col-md-4">
@@ -23,17 +23,17 @@
   </div>
 
   <div class="row" id="workingStatusContainer"
-  @if($last_schedule->breaktime->isNotEmpty() && !$last_schedule->breaktime->last()->break_out)
+  @if($last_biometric->breaktime->isNotEmpty() && !$last_biometric->breaktime->last()->break_out)
     hidden
   @endif
   >
-    <p class="text-center">{{logDateTimeFormat($last_schedule->start_datetime)}}</p>
-    <p class="text-center"><strong>Job: </strong>{{$last_schedule->job}}</p>
-    <p class="text-center"><strong>Task: </strong>{{$last_schedule->task}}</p>
+    <p class="text-center">{{logDateTimeFormat($last_biometric->time_in)}}</p>
+    <p class="text-center"><strong>Job: </strong>{{$last_biometric->job}}</p>
+    <p class="text-center"><strong>Task: </strong>{{$last_biometric->task}}</p>
   </div>
 
   <div class="row" id="breakTimeStatusContainer" 
-  @if($last_schedule->breaktime->isNotEmpty() && $last_schedule->breaktime->last()->break_out)
+  @if($last_biometric->breaktime->isNotEmpty() && $last_biometric->breaktime->last()->break_out)
     hidden
   @endif
   >
@@ -43,7 +43,7 @@
   <div class="row">
     <div class="col-md-12">
       <form 
-        action="{{route('timeclock.update', ['schedule' => $last_schedule->id])}}" 
+        action="{{route('timeclock.update', ['biometric' => $last_biometric->id])}}" 
         method="post"
         id="updateForm"
       >
@@ -59,7 +59,7 @@
         </div>
 
         <div class="form-group" id="breakOutBtnContainer" 
-        @if($last_schedule->breaktime->isEmpty() || $last_schedule->breaktime->last()->break_out)
+        @if($last_biometric->breaktime->isEmpty() || $last_biometric->breaktime->last()->break_out)
           hidden
         @endif
         >
@@ -70,7 +70,7 @@
         </div>
 
         <div id="switchContainer" 
-        @if($last_schedule->breaktime->isNotEmpty() && !$last_schedule->breaktime->last()->break_out)
+        @if($last_biometric->breaktime->isNotEmpty() && !$last_biometric->breaktime->last()->break_out)
           hidden
         @endif
         >
@@ -93,7 +93,7 @@
             <label class="control-label">Notes(Optional)</label>
             @component('components.textarea',[
               'name' => 'notes', 
-              'value' => old('notes', $last_schedule->notes),
+              'value' => old('notes', $last_biometric->notes),
               'id' => 'notes',
             ])
             @endcomponent
@@ -117,10 +117,10 @@
           var SECONDS_PER_MINUTES = 60;
           var timestamp;
           var dateIn;
-          @if($last_schedule->breaktime->isNotEmpty() && !$last_schedule->breaktime->last()->break_out)
-            dateIn =  moment(@json($last_schedule->breaktime->last()->break_in));
+          @if($last_biometric->breaktime->isNotEmpty() && !$last_biometric->breaktime->last()->break_out)
+            dateIn =  moment(@json($last_biometric->breaktime->last()->break_in));
           @else
-            dateIn =  moment(@json($last_schedule->start_datetime));
+            dateIn =  moment(@json($last_biometric->time_in));
           @endif
           setInterval(function() {
             timestamp = moment.duration(moment().diff(dateIn));
@@ -158,7 +158,7 @@
             },
             data: {
               break_in: moment().format('Y-MM-DD HH:mm:ss'),
-              schedule_id: @json($last_schedule->id)
+              biometric_id: @json($last_biometric->id)
             },
             type: 'POST',
             success: function() {
@@ -168,7 +168,7 @@
               $('#switchContainer').hide();
               $('#breakOutBtnContainer').show();
             }
-          })
+          });
         });
 
         $('#breakOutBtn').on('click', function(e) {
@@ -181,11 +181,11 @@
             },
             data: {
               break_out: moment().format('Y-MM-DD HH:mm:ss'),
-              schedule_id: @json($last_schedule->id)
+              biometric_id: @json($last_biometric->id)
             },
             type: 'PUT',
             success: function() {
-              dateIn = moment(@json($last_schedule->start_datetime));
+              dateIn = moment(@json($last_biometric->time_in));
               $('#breakTimeStatusContainer').hide();
               $('#workingStatusContainer').show();
               $('#breakOutBtnContainer').hide();

@@ -35,6 +35,10 @@ class User extends Authenticatable
         return $this->hasMany(Schedule::class);
     }
 
+    public function biometric() {
+        return $this->hasMany(Biometric::class);
+    }
+
     public function getFullnameAttribute()
     {
         return title_case("{$this->lastname}, {$this->firstname}");

@@ -16,7 +16,7 @@
                     </ul>
                 </div>
             @endif
-            @if($last_schedule && $last_schedule->active)
+            @if($last_biometric && $last_biometric->active)
               @include('timeclock.partials.clock_out')
             @else
               @include('timeclock.partials.clock_in')

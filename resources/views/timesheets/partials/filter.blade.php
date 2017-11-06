@@ -12,7 +12,7 @@
                     <label for="filter">Filter By:</label>
                     <select name="employee" id="employee" class="form-control">
                         <option value="" selected>All Employees</option>
-                        @foreach($employeeOptions as $employee)
+                        @foreach($employees as $employee)
                             <option value="{{$employee->id}}"
                                 @if(Request::get('employee') == $employee->id) selected @endif
                             >{{$employee->fullname}}</option>

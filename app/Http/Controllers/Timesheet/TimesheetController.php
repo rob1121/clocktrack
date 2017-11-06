@@ -35,22 +35,22 @@ class TimesheetController extends Controller
         $endOfWeek = $startOfWeek ? Carbon::parse($startOfWeek)->endOfWeek() : Carbon::now()->endOfWeek();
         $startOfDate = $startOfWeek ? Carbon::parse($startOfWeek)->startOfWeek() : Carbon::now()->startOfWeek();
         $date = clone $startOfDate;
-
+        $employee_id = \Request::get('employee');
         $config = [    
-            $startOfDate->format(config('constant.dateFormat')),
-            $endOfWeek->format(config('constant.dateFormat')),
-            \Request::get('employee')
+            $startOfDate->format(config('constant.dateTimeFormat')),
+            $endOfWeek->format(config('constant.dateTimeFormat')),
+            $employee_id
         ];
         
+        $employees = $employee_id ? User::whereId($employee_id) : new User;
+        $employees = $employees->with(['biometric' => function($query) use($config) {
+            $query->whereBetween('time_in', [$config[0], $config[1]]);
+        }]);
+        
         return view('timesheets.index', [
-            'employeeOptions' => User::all(),
-            'users' => Option::employeesWithSchedule(...$config),
-            'schedules' => Option::schedules(...$config),
+            'employees' => $employees->get(),
+            'biometrics' => Option::biometrics(...$config),
             'week' => Option::daysIn($startOfDate, $endOfWeek),
         ]);
-    }
-
-    public function whosWorking() {
-        
     }
 }

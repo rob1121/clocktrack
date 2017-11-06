@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use App\BreakTime;
 
 class BreaktimeController extends Controller
-{   /**
+{   
+    public function __construc() {
+        $this->middleware('auth');
+    }
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -15,7 +19,7 @@ class BreaktimeController extends Controller
     public function store(Request $request)
     {
         $breaktime = new BreakTime();
-        $breaktime->schedule_id = $request->schedule_id;
+        $breaktime->biometric_id = $request->biometric_id;
         $breaktime->break_in = $request->break_in;
         $breaktime->break_out = '';
         
@@ -36,8 +40,8 @@ class BreaktimeController extends Controller
      */
     public function update(Request $request, $breaktime)
     {
-        $breaktime = BreakTime::where('schedule_id', $request->schedule_id)->get()->last();
-        $breaktime->schedule_id = $request->schedule_id;
+        $breaktime = BreakTime::where('biometric_id', $request->biometric_id)->get()->last();
+        $breaktime->biometric_id = $request->biometric_id;
         $breaktime->break_out = $request->break_out;
 
         $breaktime->save();
