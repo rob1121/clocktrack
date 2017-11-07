@@ -27,9 +27,18 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    
     protected $appends = [
         'fullname', 'fullname_with_no_comma'
     ];
+    
+    public function allowUserForJob() {
+        return $this->hasMany(AllowUserForJob::class);
+    }
+    
+    public function allowUserForTask() {
+        return $this->hasMany(AllowUserForTask::class);
+    }
 
     public function schedule() {
         return $this->hasMany(Schedule::class);

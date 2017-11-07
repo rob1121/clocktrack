@@ -53,12 +53,23 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.6.2/fullcalendar.min.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@1.8.1/dist/scheduler.min.css">
 	<style>
-		.list-group-item.fc-event {
-			padding: 15px;
-			border: none;
-			background: #fff;
-			color: #222;
-		}
+	
+	#external-events .fc-event {
+		margin: 10px 0;
+		cursor: pointer;
+		margin: 5px;
+	}
+		
+	#external-events p {
+		margin: 1.5em 0;
+		font-size: 11px;
+		color: #666;
+	}
+		
+	#external-events p input {
+		margin: 0;
+		vertical-align: middle;
+	}
 	</style>
 @endpush
 
@@ -66,7 +77,7 @@
 @push('script')
 	<!-- fullcalendar -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.6.2/fullcalendar.min.js"></script>  
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.6.2/fullcalendar.min.js"></script>  
 	<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@1.8.1/dist/scheduler.min.js"></script>
 	<script>
 		var self = this;
@@ -95,31 +106,28 @@
 			ul.empty();
 
 			data.map(function(data) {
-				var eventData = JSON.stringify(data).replace(/"/g, "'");
-				var list = '<a href="#" class="list-group-item fc-event"';
-				list += 'data-event="'+ eventData +'"';
+				var list = '';
+				
+				list += '<div class="fc-event" ';
+				list += 'style="background:'+ data.color +'" ';
+				list += 'data-id="'+ data.id +'" ';
 				list += '>';
-				list += '<span style="margin-right: 5px;">';
-				list += '<i class="fa fa-circle" style="color: ' + data.color + '"></i>';
-				list += '</span>';
-				list += '<span>';
 				list += data.title;
-				list += '</span>';
 				list += '</div>';
-				list += '</a>';
 
 				ul.append(list);
 			});
 
 			$('#external-events .fc-event').each(function() {
-				var eventData = $(this).data('event').replace(/'/g, '"');
-				// extend this object with the settings you want to make
+				// var eventData = $(this).data('event').replace(/'/g, '"');
+			// store data so the calendar knows to render an event upon drop
+			$(this).data('event', {
+				itemId: $(this).data('id'),
+				color: $(this).data('color'),
+				title: $.trim($(this).text()), // use the element's text as the event title
+				stick: true // maintain when user navigates (see docs on the renderEvent method)
+			});
 
-				// get the complete object data from html
-				// store data so the calendar knows to render an event upon drop
-				$(this).data('event', JSON.parse(eventData));
-				// store data so the calendar knows to render an event upon drop
-				// $(this).data('event', eventData);
 
 				// make the event draggable using jQuery UI
 				$(this).draggable({
@@ -180,17 +188,62 @@
 			self.dateRange(start.format('MMM D') + ' - ' + end.format(endFormat));
 		}
 
-		
-
 		self.calendarEventResize = function (event, delta, revertFunc, jsEvent, ui, view) {
 			var duration = moment.duration(event.end.diff(event.start));
 			if(duration.asHours() > 24) revertFunc();
 		}
 
+		self.updateDb = function(event) {
+			var data = {
+					start: event.start.format('Y-MM-DD HH:mm:ss'),
+					end: event.end.format('Y-MM-DD HH:mm:ss'),
+					scheduleId: event.scheduleId,
+					jobs: $("#calendar").fullCalendar("getResourceById", event.resourceId),
+			};
+
+			$.ajax({
+				url: 'https://clocktrack.dev/shift/' + event.scheduleId,
+				beforeSend: function(xhr){
+					xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
+				},
+				data: data,
+				dataType: 'JSON',
+				type: 'PUT',
+			});
+		}
+
+		self.insertToDb = function(event) {
+			var resource = $("#calendar").fullCalendar("getResourceById", event.resourceId);
+			var data = {
+					start: event.start.format('Y-MM-DD HH:mm:ss'),
+					end: (event.end || event.start).format('Y-MM-DD HH:mm:ss'),
+					job: null,
+					employee: null,
+			};
+
+			if (self.grouping === 'job') {
+				data.employee = event.itemId;
+				data.job = resource.id;
+			} else {
+				data.employee = resource.id;
+				data.job = event.itemId;
+			}
+
+			$.ajax({
+				url: @json(route('shift.store')),
+				beforeSend: function(xhr){
+					xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
+				},
+				data: data,
+				dataType: 'JSON',
+				type: 'POST',
+			});
+		}
+
 		self.initScheduler = function(resourceTitle, jsonUrl) {
 			$('#calendar').fullCalendar({
 				schedulerLicenseKey: '0014662753-fcs-1482874803',
-				now: moment().format('Y-MM-D'),
+				now: moment().startOf('week').format('Y-MM-DD'),
 				viewRender: calendarViewRender,
 				editable: true, // enable draggable events
 				eventResize: self.calendarEventResize,
@@ -216,36 +269,10 @@
 				resources: self.data,
 				events: jsonUrl,
 				drop: function(date, jsEvent, ui, resourceId) {
-					// console.log($(this).data('event'));
-
 					console.log($('calendar').fullCalendar( 'getEventResource', resourceId ));
 				},
-				eventReceive: function(event) { // called when a proper external event is dropped
-    		var resourceTitle = $("#calendar").fullCalendar("getResourceById",event.resourceId);
-					// console.log(resourceTitle.title);
-					console.log(resourceTitle.color);
-					$.ajax({
-            url: @json(route('shift.batch_Store')),
-            beforeSend: function(xhr){
-              xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
-            },
-            data: {
-							items: JSON.stringify( $('#calendar').fullCalendar( 'clientEvents').map(function(e) {
-								return {
-										start: e.start,
-										end: e.end,
-										title: e.title
-								};
-						}))
-						},
-						dataType: 'JSON',
-            type: 'POST',
-          });
-				},
-				eventDrop: function(event) { // called when an event (already on the calendar) is moved
-    		var resourceTitle = $("#calendar").fullCalendar("getResourceById",event.resourceId);
-					console.log(resourceTitle.title);
-				}
+				eventReceive: self.insertToDb,
+				eventDrop: self.updateDb
 			});
 		}
 

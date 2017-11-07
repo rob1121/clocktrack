@@ -18,6 +18,14 @@ class CreateJobsTable extends Migration
             $table->string('title');
             $table->string('number')->nullable();
             $table->string('description')->nullable();
+            $table->string('file')->nullable();
+            $table->string('color')->default('#3097D1');
+            $table->integer('total_hour_target')->default(0);
+            $table->string('address');
+            $table->string('city');
+            $table->string('state');
+            $table->string('postal_code');
+            $table->string('country');
             $table->timestamps();
         });
     }

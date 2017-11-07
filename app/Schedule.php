@@ -17,7 +17,6 @@ class Schedule extends Model
         'end_time',
         'job',
         'task',
-        'notes',
         'file',
         'job_description',
     ];

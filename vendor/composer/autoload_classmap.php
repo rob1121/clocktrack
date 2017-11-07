@@ -6,6 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\AllowUserForTask' => $baseDir . '/app/AllowUserForTask.php',
+    'App\\AllowedTaskForJob' => $baseDir . '/app/AllowedTaskForJob.php',
+    'App\\AllowedUserForJob' => $baseDir . '/app/AllowedUserForJob.php',
     'App\\Biometric' => $baseDir . '/app/Biometric.php',
     'App\\BreakTime' => $baseDir . '/app/BreakTime.php',
     'App\\Clocktrack\\Option' => $baseDir . '/app/clocktrack/Option.php',
@@ -18,6 +21,8 @@ return array(
     'App\\Http\\Controllers\\BreaktimeController' => $baseDir . '/app/Http/Controllers/BreaktimeController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\DashboardController' => $baseDir . '/app/Http/Controllers/DashboardController.php',
+    'App\\Http\\Controllers\\EmployeeController' => $baseDir . '/app/Http/Controllers/EmployeeController.php',
+    'App\\Http\\Controllers\\JobController' => $baseDir . '/app/Http/Controllers/JobController.php',
     'App\\Http\\Controllers\\Schedule\\ByEmployeeController' => $baseDir . '/app/Http/Controllers/Schedule/ByEmployeeController.php',
     'App\\Http\\Controllers\\Schedule\\ByJobController' => $baseDir . '/app/Http/Controllers/Schedule/ByJobController.php',
     'App\\Http\\Controllers\\Schedule\\ScheduleController' => $baseDir . '/app/Http/Controllers/Schedule/ScheduleController.php',
@@ -25,6 +30,7 @@ return array(
     'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => $baseDir . '/app/Http/Controllers/Timesheet/TimesheetController.php',
     'App\\Http\\Controllers\\TimeclockController' => $baseDir . '/app/Http/Controllers/TimeclockController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
+    'App\\Http\\Middleware\\AdminMiddleware' => $baseDir . '/app/Http/Middleware/AdminMiddleware.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',
     'App\\Http\\Middleware\\RedirectIfAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfAuthenticated.php',
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',

@@ -10,6 +10,10 @@ class Task extends Model
         'title',
     ];
 
+    public function allowTaskForJob() {
+        return $this->belongsTo(AllowTaskForJob::class);
+    }
+
     public static function selectOptions() {
         return task::get()->map(function ($task) {
             return (object)[

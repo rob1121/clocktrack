@@ -335,6 +335,9 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
     );
 
     public static $classMap = array (
+        'App\\AllowUserForTask' => __DIR__ . '/../..' . '/app/AllowUserForTask.php',
+        'App\\AllowedTaskForJob' => __DIR__ . '/../..' . '/app/AllowedTaskForJob.php',
+        'App\\AllowedUserForJob' => __DIR__ . '/../..' . '/app/AllowedUserForJob.php',
         'App\\Biometric' => __DIR__ . '/../..' . '/app/Biometric.php',
         'App\\BreakTime' => __DIR__ . '/../..' . '/app/BreakTime.php',
         'App\\Clocktrack\\Option' => __DIR__ . '/../..' . '/app/clocktrack/Option.php',
@@ -347,6 +350,8 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
         'App\\Http\\Controllers\\BreaktimeController' => __DIR__ . '/../..' . '/app/Http/Controllers/BreaktimeController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
+        'App\\Http\\Controllers\\EmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmployeeController.php',
+        'App\\Http\\Controllers\\JobController' => __DIR__ . '/../..' . '/app/Http/Controllers/JobController.php',
         'App\\Http\\Controllers\\Schedule\\ByEmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ByEmployeeController.php',
         'App\\Http\\Controllers\\Schedule\\ByJobController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ByJobController.php',
         'App\\Http\\Controllers\\Schedule\\ScheduleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ScheduleController.php',
@@ -354,6 +359,7 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
         'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => __DIR__ . '/../..' . '/app/Http/Controllers/Timesheet/TimesheetController.php',
         'App\\Http\\Controllers\\TimeclockController' => __DIR__ . '/../..' . '/app/Http/Controllers/TimeclockController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
+        'App\\Http\\Middleware\\AdminMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/AdminMiddleware.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
         'App\\Http\\Middleware\\RedirectIfAuthenticated' => __DIR__ . '/../..' . '/app/Http/Middleware/RedirectIfAuthenticated.php',
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',
