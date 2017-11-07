@@ -19,7 +19,17 @@ class JobController extends Controller
     public function index()
     {
         $this->middleware('admin');
-        return view('job.index');
+
+        if(\Request::has('q')) {
+            $q = \Request::get('q');
+            $jobs = Job::where('title', 'LIKE', "%{$q}%")
+            ->orWhere('number', 'LIKE', "%{$q}%")
+            ->paginate(10);
+        } else {
+            $jobs = Job::paginate(10);
+        }
+
+        return view('job.index', ['jobs' => $jobs]);
     }
 
     /**

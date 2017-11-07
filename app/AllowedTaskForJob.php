@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AllowedTaskForJob extends Model
 {
+    protected $table = 'allowed_task_for_jobs';
     protected $fillable = [
         'task_id', 'job_id',
     ];

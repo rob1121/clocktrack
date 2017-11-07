@@ -7,7 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Job extends Model
 {
     protected $fillable = [
-        'title', 'number','description'
+        'title',
+        'number',
+        'description',
+        'file',
+        'color',
+        'total_hour_target',
+        'address',
+        'city',
+        'state',
+        'postal_code',
+        'country',
+        'active',
     ];
     
     public function allowTaskForJob() {

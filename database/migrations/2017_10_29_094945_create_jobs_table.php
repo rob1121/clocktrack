@@ -26,6 +26,7 @@ class CreateJobsTable extends Migration
             $table->string('state');
             $table->string('postal_code');
             $table->string('country');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
