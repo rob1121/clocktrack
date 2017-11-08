@@ -21,7 +21,7 @@
     @stack('style')
 </head>
 <body style="overflow-y: scroll">
-    @include(Auth::user()->is_admin ? 'layouts.nav' : 'layouts.basic_nav');
+    @include((Auth::user() && Auth::user()->is_admin) ? 'layouts.nav' : 'layouts.basic_nav');
     <div id="wrapper" >
         @yield('content')
         <footer>
