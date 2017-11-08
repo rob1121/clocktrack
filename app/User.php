@@ -36,12 +36,12 @@ class User extends Authenticatable
         return $this->hasOne(Company::class);
     }
     
-    public function allowUserForJob() {
-        return $this->hasMany(AllowUserForJob::class);
+    public function allowedUserForJob() {
+        return $this->hasMany(AllowedUserForJob::class);
     }
     
-    public function allowUserForTask() {
-        return $this->hasMany(AllowUserForTask::class);
+    public function allowedUserForTask() {
+        return $this->hasMany(AllowedUserForTask::class);
     }
 
     public function schedule() {

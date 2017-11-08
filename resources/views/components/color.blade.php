@@ -1,85 +1,71 @@
 <div class="btn-group" data-toggle="buttons">
 			
-			<label class="btn btn-success {{($value === 'success') ? 'active' : ''}}">
+			<label class="btn btn-success {{($value === '#20895E') ? 'active' : ''}}">
 				<input 
           type="radio" 
           name="{{$name}}" 
           id="{{$name}}" 
           autocomplete="off" 
-          @if($value === 'success')
+          @if($value === '#20895E')
             checked
           @endif
-          value="success"
+          value="#20895E"
         >
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-primary {{($value === 'primary') ? 'active' : ''}}">
+			<label class="btn btn-primary {{($value === '#2579A9') ? 'active' : ''}}">
 				<input 
           type="radio" 
           name="{{$name}}" 
           id="{{$name}}" 
           autocomplete="off"
-          @if($value === 'primary')
+          @if($value === '#2579A9')
             checked
           @endif
-          value="primary"
+          value="#2579A9"
         >
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-info {{($value === 'info') ? 'active' : ''}}">
+			<label class="btn btn-info {{($value === '#6B9DBB') ? 'active' : ''}}">
 				<input 
           type="radio" 
           name="{{$name}}" 
           id="{{$name}}" 
           autocomplete="off" 
-          @if($value === 'info')
+          @if($value === '#6B9DBB')
             checked
           @endif
-          value="info"
+          value="#6B9DBB"
         >
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-default {{($value === 'default') ? 'active' : ''}}">
+			<label class="btn btn-warning {{($value === '#B6A338') ? 'active' : ''}}">
 				<input 
           type="radio" 
           name="{{$name}}" 
           id="{{$name}}" 
           autocomplete="off" 
-          @if($value === 'default')
+          @if($value === '#B6A338')
             checked
           @endif
-          value="default"
+          value="#B6A338"
         >
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-warning {{($value === 'warning') ? 'active' : ''}}">
+			<label class="btn btn-danger {{($value === '#954120') ? 'active' : ''}}">
 				<input 
           type="radio" 
           name="{{$name}}" 
           id="{{$name}}" 
           autocomplete="off" 
-          @if($value === 'warning')
+          @if($value === '#954120')
             checked
           @endif
-          value="warning"
-        >
-				<span class="fa fa-check"></span>
-			</label>
-
-			<label class="btn btn-danger {{($value === 'danger') ? 'active' : ''}}">
-				<input 
-          type="radio" 
-          name="{{$name}}" 
-          id="{{$name}}" 
-          autocomplete="off" 
-          @if($value === 'danger')
-            checked
-          @endif
-          value="danger"
+          value="#954120"
         >
 				<span class="fa fa-check"></span>
 			</label>

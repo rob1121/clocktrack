@@ -8,11 +8,12 @@ use App\User;
 use App\Task;
 use App\AllowedUserForJob;
 use App\AllowedTaskForJob;
+use Storage;
 
 class JobController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
@@ -48,16 +49,17 @@ class JobController extends Controller
             ];
         });
 
+
         $tasks = Task::all();
-        $tasks = $tasks->map(function($employee) {
+        $tasks = $tasks->map(function($task) {
             return (object)[
-                'value' => $employee->id,
-                'text' => $employee->title
+                'value' => $task->id,
+                'text' => $task->title
             ];
         });
 
         return view('job.create', [
-            'employees' => $tasks,
+            'employees' => $employees,
             'tasks' => $tasks
         ]);
     }
@@ -70,15 +72,11 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-            
         $this->validate($request, [
             'title' => 'required|max:100',
-            'number' => 'required|numeric',
-            'description' => 'required|max:500',
+            'description' => 'max:500',
             'file' => 'mimes:xls,xlsx,pdf,doc,docx,csv,jpeg,png,bmp,gif,svg',
             'color' => 'required',
-            'employees.*' => 'required|numeric',
-            'tasks.*' => 'required|numeric',
             'total_hour_target' => 'required|numeric',
             'address' => 'required',
             'city' => 'required',
@@ -86,35 +84,70 @@ class JobController extends Controller
             'postal_code' => 'required|numeric',
             'country' => 'required',
         ]);
+        
+        $path = '';
+        if($request->has('file')) {
+            $path = $request->file->store('job');
+        }
 
         $job = new Job;
         $job->title = $request->title;
         $job->number = $request->number;
         $job->description = $request->description;
-        $job->file = $request->file;
+        $job->file = $path;
         $job->color = $request->color;
+        $job->track_labor_budget = $request->track_labor_budget;
+        $job->track_when_budget_hits = $request->track_when_budget_hits;
+        $job->hours_remaining = $request->hours_remaining;
         $job->total_hour_target = $request->total_hour_target;
         $job->address = $request->address;
         $job->city = $request->city;
         $job->state = $request->state;
         $job->postal_code = $request->postal_code;
         $job->country = $request->country;
+        $job->remind_clockout = $request->remind_clockout;
+        $job->remind_clockin = $request->remind_clockin;
+        $job->save();
 
         //link employee
-        collect($request->employees)->map(function($employee) use($job) {
-            $allowedUserForJob = new AllowedUserForJob;
-            $allowedUserForJob->user_id = $employee;
-            $allowedUserForJob->job_id = $job->id;
-            $allowedUserForJob->save();
+        $employees = [];
+        $employeesIds = explode(',', $request->employees);
+        if($request->employeeAccessControlId === 'allow all') {
+            $employees = User::all();
+        } elseif($request->employeeAccessControlId === 'allow only') {
+            $employees = User::whereIn('id', $employeesIds)->get();
+        } elseif($request->employeeAccessControlId === 'allow any except') {
+            $employees = User::whereNotIn('id', $employeesIds)->get();
+        }
+
+        $allowedEmployees = $employees->map(function($employee) use($job) {
+            return [
+                'user_id' => $employee->id,
+                'job_id' => $job->id
+            ];
         });
 
-        //link task
-        collect($request->tasks)->map(function($task) use($job) {
-            $allowedTaskForJob = new AllowedTaskForJob;
-            $allowedTaskForJob->task_id = $task;
-            $allowedTaskForJob->job_id = $job->id;
-            $allowedTaskForJob->save();
+        AllowedUserForJob::insert($allowedEmployees->toArray());
+
+        //link employee
+        $tasks = [];
+        $tasksIds = explode(',', $request->employees);
+        if($request->employeeAccessControlId === 'allow all') {
+            $tasks = Task::all();
+        } elseif($request->employeeAccessControlId === 'allow only') {
+            $tasks = Task::whereIn('id', $tasksIds)->get();
+        } elseif($request->employeeAccessControlId === 'allow any except') {
+            $tasks = Task::whereNotIn('id', $tasksIds)->get();
+        }
+
+        $allowedTasks = $tasks->map(function($task) use($job) {
+            return [
+                'task_id' => $task->id,
+                'job_id' => $job->id
+            ];
         });
+
+        AllowedTaskForJob::insert($allowedTasks->toArray());
 
         return redirect()->route('job.index')->with('status', 'Job Successfully added!!');
     }
@@ -136,15 +169,25 @@ class JobController extends Controller
         });
 
         $tasks = Task::all();
-        $tasks = $tasks->map(function($employee) {
+        $tasks = $tasks->map(function($task) {
             return (object)[
-                'value' => $employee->id,
-                'text' => $employee->title
+                'value' => $task->id,
+                'text' => $task->title
             ];
         });
-
+        
+        $selectedEmployees = $job->allowedUserForJob->map(function($job) {
+            return $job->user_id;
+        });
+        
+        $selectedTasks = $job->allowedTaskForJob->map(function($job) {
+            return $job->task_id;
+        });
+        
         return view('job.edit', [
-            'employees' => $tasks,
+            'selectedEmployees' => $selectedEmployees->implode(','),
+            'selectedTasks' => $selectedTasks->implode(','),
+            'employees' => $employees,
             'tasks' => $tasks,
             'job' => $job
         ]);
@@ -162,8 +205,7 @@ class JobController extends Controller
             
         $this->validate($request, [
             'title' => 'required|max:100',
-            'number' => 'required|numeric',
-            'description' => 'required|max:500',
+            'description' => 'max:500',
             'file' => 'mimes:xls,xlsx,pdf,doc,docx,csv,jpeg,png,bmp,gif,svg',
             'color' => 'required',
             'employees.*' => 'required|numeric',
@@ -176,42 +218,61 @@ class JobController extends Controller
             'country' => 'required',
         ]);
 
-        $job = new Job;
+        $path = '';
+        if($request->has('file')) {
+            Storage::delete($job->file);
+            $path = $request->file->store('job');
+        }
+
         $job->title = $request->title;
         $job->number = $request->number;
         $job->description = $request->description;
-        $job->file = $request->file;
+        $job->file = $path;
         $job->color = $request->color;
+        $job->track_labor_budget = $request->track_labor_budget;
+        $job->track_when_budget_hits = $request->track_when_budget_hits;
+        $job->hours_remaining = $request->hours_remaining;
         $job->total_hour_target = $request->total_hour_target;
         $job->address = $request->address;
         $job->city = $request->city;
         $job->state = $request->state;
         $job->postal_code = $request->postal_code;
         $job->country = $request->country;
+        $job->remind_clockout = $request->remind_clockout;
+        $job->remind_clockin = $request->remind_clockin;
+        $job->save();
+        
+        if($job->allowedUserForJob->isNotEmpty()) {
+            $job->allowedUserForJob->each(function($user) {
+                $user->delete();
+            });
+        }
+        
+        if($job->allowedTaskForJob->isNotEmpty()) {
+            $job->allowedTaskForJob->each(function($task) {
+                $task->delete();
+            });
+        }
+        $allowedEmployees = explode(',', $request->employees);
+        $allowedEmployees = collect($allowedEmployees)->map(function($employee) use($job) {
+            return [
+                'user_id' => $employee,
+                'job_id' => $job->id
+            ];
+        });
+        
+        AllowedUserForJob::insert($allowedEmployees->toArray());
 
-        $job->allowedUserForJob->each(function($user) {
-            $user->delete();
+        $allowedTasks = explode(',', $request->tasks);
+        $allowedTasks = collect($allowedTasks)->map(function($task) use($job) {
+            return [
+                'task_id' => $task,
+                'job_id' => $job->id
+            ];
         });
 
-        $job->allowedTaskForJob->each(function($task) {
-            $task->delete();
-        });
+        AllowedTaskForJob::insert($allowedTasks->toArray());
 
-        //link employee
-        collect($request->employees)->map(function($employee) use($job) {
-            $allowedUserForJob = new AllowedUserForJob;
-            $allowedUserForJob->user_id = $employee;
-            $allowedUserForJob->job_id = $job->id;
-            $allowedUserForJob->save();
-        });
-
-        //link task
-        collect($request->tasks)->map(function($task) use($job) {
-            $allowedTaskForJob = new AllowedTaskForJob;
-            $allowedTaskForJob->task_id = $task;
-            $allowedTaskForJob->job_id = $job->id;
-            $allowedTaskForJob->save();
-        });
         return redirect()->route('job.index')->with('status', 'Job Successfully updated!!');
     }
 
@@ -223,21 +284,26 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
+        if($job->allowedUserForJob->isNotEmpty()) {
+            $job->allowedUserForJob->each(function($user) {
+                $user->delete();
+            });
+        }
 
-        $job->allowedUserForJob->each(function($user) {
-            $user->delete();
-        });
-
-        $job->allowedTaskForJob->each(function($task) {
-            $task->delete();
-        });
+        if($job->allowedTaskForJob->isNotEmpty()) {
+            $job->allowedTaskForJob->each(function($task) {
+                $task->delete();
+            });
+        }
+        
+        Storage::delete($job->file);
         $job->delete();
         
-        return redirect()->route('job.index')->with('status', 'Job Successfully deleted!!');
+        return back()->with('status', 'Job Successfully deleted!!');
     }
 
     public function isActive(Request $request, Job $job) {
-        $job->active = $request->is_active;
+        $job->active = $request->is_active === 'true';
         $job->save();
     }
 }

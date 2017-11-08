@@ -17,6 +17,7 @@ class ScheduleController extends Controller
 {
     public function __construc() {
         $this->middleware('auth');
+        $this->middleware('admin');
     }
 
     /**

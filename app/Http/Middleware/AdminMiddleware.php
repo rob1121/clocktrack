@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Auth;
 
 class AdminMiddleware
 {
@@ -15,9 +16,12 @@ class AdminMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::guard($guard)->check() && Auth::user()->is_admin) {
+        if (Auth::user() && Auth::user()->is_admin) {
             return $next($request);
+        } else if(Auth::user() && !Auth::user()->is_admin) {
+            return redirect()->route('timeclock.calendar');
         }
+
         return redirect('/');
         
     }

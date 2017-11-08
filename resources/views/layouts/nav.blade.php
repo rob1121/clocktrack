@@ -128,12 +128,12 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{route('task.index')}}">
                                     Tasks
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{route('employee.index')}}">
                                     Employees
                                 </a>
                             </li>

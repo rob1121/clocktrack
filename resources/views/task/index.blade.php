@@ -2,12 +2,16 @@
 
 @section('content')
     <div class="container-fluid">
-        @if (session('status'))
-            @component('components.alert', ['title' => 'Schedule Added', 'icon' => 'check-circle', 'type' => 'success' ])
-            <p>{{session('status')}}</p>
-            @endcomponent
-        @endif
         <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              @if (session('status'))
+                  @component('components.alert', ['title' => 'Schedule Added', 'icon' => 'check-circle', 'type' => 'success' ])
+                  <p>{{session('status')}}</p>
+                  @endcomponent
+              @endif
+            </div>
+          </div>
           <div class="row">
             <div class="col-md-12">
               <h1>Tasks</h1>
@@ -62,7 +66,7 @@
                     <tr>
                     <td>{{ $task->title }}</td>
                     <td>{{ $task->code }}</td>
-                    <td>{{ $task->created_at }}</td>
+                    <td>{{ Carbon::parse($task->created_at)->format('Y-m-d') }}</td>
                     <td>
                         <input 
                           type="checkbox" 
@@ -78,9 +82,9 @@
                       <a href="#" class="btn btn-primary deleteBtn">
                           <i class="fa fa-trash"></i>
                       </a>
-                      <form method="post" action="{{route('task.destroy', ['task' => $task->id])">
+                      <form method="post" action="{{route('task.destroy', ['task' => $task->id])}}">
                         {{csrf_field()}}
-                        {{method_field('DESTROY')}}
+                        {{method_field('DELETE')}}
                       </form>
                     </td>
                   </tr>

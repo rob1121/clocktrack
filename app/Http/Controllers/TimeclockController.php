@@ -19,11 +19,27 @@ class TimeclockController extends Controller
     
     public function calendar()
     {
-        $biometrics = Auth::user()->biometric;
+        $biometrics = Auth::user()->biometric->sortByDesc('time_out');
+        $jobs = Auth::user()->allowedUserForJob;
+        $jobs = $jobs->map(function($pivot) {
+            return (object)[
+                'value' => $pivot->job->title,
+                'text'=>$pivot->job->title,
+            ];
+        });
+
+        $tasks = Auth::user()->allowedUserForTask;
+        $tasks = $tasks->map(function($pivot) { 
+            return (object)[
+                'value' => $pivot->task->title,
+                'text'=>$pivot->task->title,
+            ];
+        });
+
         return view('timeclock.index_calendar', [
-            'biometrics' => $biometrics->sortByDesc('end_datetime'),
-            'jobOptions' => Job::selectOptions(),
-            'taskOptions' => Task::selectOptions(),
+            'biometrics' => $biometrics,
+            'jobOptions' => $jobs,
+            'taskOptions' => $tasks,
             'last_biometric' => Auth::user()->biometric->last(),
         ]);
     }
@@ -53,12 +69,27 @@ class TimeclockController extends Controller
                 'date' => Carbon::parse($biometric->time_in)->format('D'),
             ];
         });
+        $jobs = Auth::user()->allowedUserForJob;
+        $jobs = $jobs->map(function($pivot) {
+            return (object)[
+                'value' => $pivot->job->title,
+                'text'=>$pivot->job->title,
+            ];
+        });
+
+        $tasks = Auth::user()->allowedUserForTask;
+        $tasks = $tasks->map(function($pivot) { 
+            return (object)[
+                'value' => $pivot->task->title,
+                'text'=>$pivot->task->title,
+            ];
+        });
         
         return view('timeclock.index_timesheet',[
             'biometrics' => $biometrics,
             'week' => Option::daysIn($start, $end),
-            'jobOptions' => Job::selectOptions(),
-            'taskOptions' => Task::selectOptions(),
+            'jobOptions' => $jobs,
+            'taskOptions' => $tasks,
             'last_biometric' => Auth::user()->biometric ? Auth::user()->biometric->last() : [],
         ]);
     }

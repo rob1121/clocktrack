@@ -2,14 +2,18 @@
 
 @section('content')
     <div class="container-fluid">
-        @if (session('status'))
-            @component('components.alert', ['title' => 'Schedule Added', 'icon' => 'check-circle', 'type' => 'success' ])
-            <p>{{session('status')}}</p>
-            @endcomponent
-        @endif
         <div class="container">
           <div class="row">
             <div class="col-md-12">
+              @if (session('status'))
+                <div class="row">
+                  <div class="col-md-12">
+                        @component('components.alert', ['title' => 'Schedule Added', 'icon' => 'check-circle', 'type' => 'success' ])
+                        <p>{{session('status')}}</p>
+                        @endcomponent
+                  </div>
+                </div>
+              @endif
               <h1>Jobs</h1>
             </div>
           </div>
@@ -64,15 +68,15 @@
                     <tr>
                     <td>{{ $job->title }}</td>
                     <td>{{ $job->number }}</td>
-                    <td>{{ $job->total_hour_target }}</td>
-                    <td>{{ $job->total_hour_target }}</td>
-                    <td>{{ $job->created_at }}</td>
+                    <td>{{ $job->total_hour_target ?: '-' }}</td>
+                    <td>{{ $job->hours_remaining ?: '-' }}</td>
+                    <td>{{ Carbon::parse($job->created_at)->format('Y-m-d') }}</td>
                     <td>
                         <input 
                           type="checkbox" 
-                          checked="{{$job->active}}" 
                           class="checkbox" 
                           data-id="{{$job->id}}"
+                          {{$job->active === 1 ? 'checked' : ''}}
                         >
                     </td>
                     <td class="text-right">
@@ -82,9 +86,9 @@
                       <a href="#" class="btn btn-primary deleteBtn">
                           <i class="fa fa-trash"></i>
                       </a>
-                      <form method="post" action="{{route('job.destroy', ['job' => $job->id])">
+                      <form method="post" action="{{route('job.destroy', ['job' => $job->id])}}">
                         {{csrf_field()}}
-                        {{method_field('DESTROY')}}
+                        {{method_field('DELETE')}}
                       </form>
                     </td>
                   </tr>
@@ -110,7 +114,7 @@
 
       $('.checkbox').on('change', function() {
         $.ajax({
-          url: '/job/' + $(this).data('id') + '/is-active',
+          url: @json(Request::root()) + '/job/' + $(this).data('id') + '/is-active',
           beforeSend: function(xhr){
             xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
           },

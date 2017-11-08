@@ -15,6 +15,7 @@ class ByJobController extends Controller
      */
     public function index()
     {
+        $this->middleware('admin');
         $schedules = Schedule::where('job', \Request::get('job'));
         $schedules->where('start_date', \Request::get('date'));
         

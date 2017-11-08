@@ -81,14 +81,6 @@
                 <div class="title m-b-md">
                     ClockTrack
                 </div>
-
-                <div class="links">
-                    <a href="https://ClockTrack.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://ClockTrack-news.com">News</a>
-                    <a href="https://forge.ClockTrack.com">Forge</a>
-                    <a href="https://github.com/ClockTrack/ClockTrack">GitHub</a>
-                </div>
             </div>
         </div>
     </body>

@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class ByEmployeeController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
@@ -18,6 +18,7 @@ class ByEmployeeController extends Controller
      */
     public function index(User $user, Request $request)
     {
+        $this->middleware('admin');
         $user = $user->load(['schedule' => function($query) use($request) {
             $query->where('start_date', $request->date)->get();
         }]);

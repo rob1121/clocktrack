@@ -12,8 +12,12 @@ class Task extends Model
         'active'
     ];
 
-    public function allowTaskForJob() {
-        return $this->belongsTo(AllowTaskForJob::class);
+    public function allowedTaskForJob() {
+        return $this->hasMany(AllowedTaskForJob::class);
+    }
+
+    public function allowedUserForTask() {
+        return $this->hasMany(AllowedUserForTask::class);
     }
 
     public static function selectOptions() {

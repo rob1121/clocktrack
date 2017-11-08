@@ -9,8 +9,8 @@ use App\User;
 
 class ShiftController extends Controller
 {
-    public function __construc() {
-        $this->middleware('auth');
+    public function __construct() {
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.

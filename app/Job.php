@@ -26,12 +26,12 @@ class Job extends Model
         'remind_clockin',
     ];
     
-    public function allowTaskForJob() {
-        return $this->hasMany(AllowTaskForJob::class);
+    public function allowedTaskForJob() {
+        return $this->hasMany(AllowedTaskForJob::class);
     }
     
-    public function allowUserForJob() {
-        return $this->belongsTo(AllowUserForJob::class);
+    public function allowedUserForJob() {
+        return $this->hasMany(AllowedUserForJob::class);
     }
 
     public static function selectOptions() {

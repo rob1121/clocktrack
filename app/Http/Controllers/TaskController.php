@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Task;
+use App\User;
+use App\AllowedUserForTask;
 
 class TaskController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
@@ -21,7 +23,7 @@ class TaskController extends Controller
         if(\Request::has('q')) {
             $q = \Request::get('q');
             $tasks = Task::where('title', 'LIKE', "%{$q}%")
-            ->orWhere('number', 'LIKE', "%{$q}%")
+            ->orWhere('code', 'LIKE', "%{$q}%")
             ->paginate(10);
         } else {
             $tasks = Task::paginate(10);
@@ -44,7 +46,7 @@ class TaskController extends Controller
                 'text' => $employee->fullname
             ];
         });
-        return view('task.create', ['employees' => $tasks]);
+        return view('task.create', ['employees' => $employees]);
     }
 
     /**
@@ -55,9 +57,37 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //validate
-        //store task
+        $this->validate($request, [
+            'title' => 'required|max:100',
+        ]);
+
+        $task = new Task;
+        $task->title = $request->title;
+        $task->code = $request->code;
+        $task->save();
+
+        
+
         //link employee
+        $employees = [];
+        $employeesIds = explode(',', $request->employees);
+        if($request->taskAccessControlId === 'allow all') {
+            $employees = User::all();
+        } elseif($request->taskAccessControlId === 'allow only') {
+            $employees = User::whereIn('id', $employeesIds)->get();
+        } elseif($request->taskAccessControlId === 'allow any except') {
+            $employees = User::whereNotIn('id', $employeesIds)->get();
+        }
+        
+        $allowedEmployees = $employees->map(function($employee) use($task) {
+            return [
+                'user_id' => $employee->id,
+                'task_id' => $task->id
+            ];
+        });
+
+        AllowedUserForTask::insert($allowedEmployees->toArray());
+        
         return redirect()->route('task.index')->with('status', 'Task Successfully added!!');
     }
 
@@ -77,9 +107,14 @@ class TaskController extends Controller
             ];
         });
         
+        $selectedEmployees = $task->allowedUserForTask->map(function($task) {
+            return $task->user_id;
+        });
+
         return view('task.edit', [
-            'employees' => $tasks,
-            'task' => $task
+            'employees' => $employees,
+            'task' => $task,
+            'selectedEmployees' => $selectedEmployees->implode(','),
         ]);
     }
 
@@ -92,6 +127,30 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        $this->validate($request, [
+            'title' => 'required|max:100',
+        ]);
+        $task->title = $request->title;
+        $task->code = $request->code;
+        $task->save();
+
+        
+        if($task->allowedUserForTask->isNotEmpty()) {
+            $task->allowedUserForTask->each(function($user) {
+                $user->delete();
+            });
+        }
+
+        $employeesIds = explode(',', $request->employees);
+        $allowedEmployees = collect($employeesIds)->map(function($employee) use($task) {
+            return [
+                'user_id' => $employee,
+                'task_id' => $task->id
+            ];
+        });
+
+        AllowedUserForTask::insert($allowedEmployees->toArray());
+        
         return redirect()->route('task.index')->with('status', "Task  {$task->title} uccessfully updated!!");
     }
 
@@ -103,6 +162,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $task->delete();
+        
         return redirect()->route('task.index')->with('status', "Task {$task->title} Successfully updated!!");
     }
 

@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class AllowedUserForTask extends Model
 {
-    protected $table = 'allowed_user_for_task';
     protected $fillable = [
         'task_id', 'user_id',
     ];
 
     public function task() {
-        return $this->hasMany(Task::class);
+        return $this->belongsTo(Task::class);
     }
 
     public function user() {

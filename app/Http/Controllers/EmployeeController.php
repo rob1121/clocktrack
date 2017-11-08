@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\User;
+use App\User as Employee;
 
 class EmployeeController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
@@ -18,7 +18,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        return view('employee.index', ['employess' => User::all()]);
+        $this->middleware('admin');
+        return view('employee.index', ['employees' => Employee::paginate(10)]);
     }
 
     /**
@@ -29,7 +30,7 @@ class EmployeeController extends Controller
     public function create()
     {
         $this->middleware('admin');
-        return view('auth.register');
+        return view('employee.create');
     }
 
     /**
@@ -40,6 +41,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        $this->middleware('admin');
         $this->validate($request, [
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -47,13 +49,13 @@ class EmployeeController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
-        
         $user = new User;
-        $user->firstname = $data['firstname'];
-        $user->lastname = $data['lastname'];
-        $user->phone = $data['phone'];
-        $user->email = $data['email'];
-        $user->password = bcrypt($data['password']);
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->phone = $request->phone;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->is_admin = $request->is_admin ?: 0;
         $user->save();
 
         return redirect()->route('employee.index')->with('status', "Employee {$user->lastname}, {$user->firstname} successfully registered");
@@ -65,9 +67,9 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Employee $employee)
     {
-        return view('employee.edit', ['employee' => $user]);
+        return view('employee.edit', ['employee' => $employee]);
     }
 
     /**
@@ -77,15 +79,23 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Employee $employee)
     {
-        $user->firstname = $request->firstname;
-        $user->lastname = $request->lastname;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->save();
+        $this->validate($request, [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+        ]);
 
-        return redirect()->route('employee.index')->with('status', "Employee {$user->lastname}, {$user->firstname} successfully updated");
+        $employee->firstname = $request->firstname;
+        $employee->lastname = $request->lastname;
+        $employee->email = $request->email;
+        $employee->phone = $request->phone;
+        $employee->is_admin = $request->is_admin?:0;
+        $employee->save();
+
+        return redirect()->route('employee.index')->with('status', "Employee {$employee->lastname}, {$employee->firstname} successfully updated");
     }
 
     /**
@@ -94,8 +104,11 @@ class EmployeeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Employee $user)
     {
-        //
+        $this->middleware('admin');
+        $user->delete();
+
+        return back()->with('status', "Employee {$user->lastname}, {$user->firstname} successfully deleted");
     }
 }

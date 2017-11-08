@@ -14,6 +14,6 @@ class AllowedUserForJob extends Model
     }
 
     public function job() {
-        return $this->hasMany(Job::class);
+        return $this->belongsTo(Job::class);
     }
 }
