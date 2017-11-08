@@ -1,12 +1,12 @@
 <div class="btn-group" data-toggle="buttons">
 			
-			<label class="btn btn-success {{(old('color') === 'success') ? 'active' : ''}}">
+			<label class="btn btn-success {{($value === 'success') ? 'active' : ''}}">
 				<input 
           type="radio" 
-          name="color" 
-          id="color" 
+          name="{{$name}}" 
+          id="{{$name}}" 
           autocomplete="off" 
-          @if(old('color') === 'success')
+          @if($value === 'success')
             checked
           @endif
           value="success"
@@ -14,13 +14,13 @@
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-primary {{(old('color') === 'primary') ? 'active' : ''}}">
+			<label class="btn btn-primary {{($value === 'primary') ? 'active' : ''}}">
 				<input 
           type="radio" 
-          name="color" 
-          id="color" 
+          name="{{$name}}" 
+          id="{{$name}}" 
           autocomplete="off"
-          @if(old('color') === 'primary')
+          @if($value === 'primary')
             checked
           @endif
           value="primary"
@@ -28,13 +28,13 @@
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-info {{(old('color') === 'info') ? 'active' : ''}}">
+			<label class="btn btn-info {{($value === 'info') ? 'active' : ''}}">
 				<input 
           type="radio" 
-          name="color" 
-          id="color" 
+          name="{{$name}}" 
+          id="{{$name}}" 
           autocomplete="off" 
-          @if(old('color') === 'info')
+          @if($value === 'info')
             checked
           @endif
           value="info"
@@ -42,13 +42,13 @@
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-default {{(old('color') === 'default') ? 'active' : ''}}">
+			<label class="btn btn-default {{($value === 'default') ? 'active' : ''}}">
 				<input 
           type="radio" 
-          name="color" 
-          id="color" 
+          name="{{$name}}" 
+          id="{{$name}}" 
           autocomplete="off" 
-          @if(old('color') === 'default')
+          @if($value === 'default')
             checked
           @endif
           value="default"
@@ -56,13 +56,13 @@
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-warning {{(old('color') === 'warning') ? 'active' : ''}}">
+			<label class="btn btn-warning {{($value === 'warning') ? 'active' : ''}}">
 				<input 
           type="radio" 
-          name="color" 
-          id="color" 
+          name="{{$name}}" 
+          id="{{$name}}" 
           autocomplete="off" 
-          @if(old('color') === 'warning')
+          @if($value === 'warning')
             checked
           @endif
           value="warning"
@@ -70,13 +70,13 @@
 				<span class="fa fa-check"></span>
 			</label>
 
-			<label class="btn btn-danger {{(old('color') === 'danger') ? 'active' : ''}}">
+			<label class="btn btn-danger {{($value === 'danger') ? 'active' : ''}}">
 				<input 
           type="radio" 
-          name="color" 
-          id="color" 
+          name="{{$name}}" 
+          id="{{$name}}" 
           autocomplete="off" 
-          @if(old('color') === 'danger')
+          @if($value === 'danger')
             checked
           @endif
           value="danger"

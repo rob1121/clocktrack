@@ -8,6 +8,8 @@ class Task extends Model
 {
     protected $fillable = [
         'title',
+        'code',
+        'active'
     ];
 
     public function allowTaskForJob() {

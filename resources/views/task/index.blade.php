@@ -10,14 +10,14 @@
         <div class="container">
           <div class="row">
             <div class="col-md-12">
-              <h1>Jobs</h1>
+              <h1>Tasks</h1>
             </div>
           </div>
           <div class="row">
             <div class="col-md-2">
-              <a href="{{route('job.create')}}" class="btn btn-success">
+              <a href="{{route('task.create')}}" class="btn btn-success">
                 <span><i class="fa fa-plus"></i></span>
-                <span>Add Job</span>
+                <span>Add Task</span>
               </a>
             </div>
           </div>
@@ -25,7 +25,7 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="form-group col-md-6 col-md-offset-6">
-                  <form action="{{route('job.index')}}" method="get">
+                  <form action="{{route('task.index')}}" method="get">
                     <div class="input-group">
                         <input name="q" type="text" class="form-control" placeholder="Search for..." value="{{Request::get('q')}}">
                         <span class="input-group-btn">
@@ -41,7 +41,7 @@
           
           <div class="row">
             <div class="col-md-12 text-right">
-              {{ $jobs->links() }}
+              {{ $tasks->links() }}
             </div>
           </div>  
 
@@ -51,38 +51,34 @@
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Number</th>
-                    <th>Hour Budgeted</th>
-                    <th>Houts Worked</th>
+                    <th>Code</th>
                     <th>Date Created</th>
                     <th>Active</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach ($jobs as $job)
+                  @foreach ($tasks as $task)
                     <tr>
-                    <td>{{ $job->title }}</td>
-                    <td>{{ $job->number }}</td>
-                    <td>{{ $job->total_hour_target }}</td>
-                    <td>{{ $job->total_hour_target }}</td>
-                    <td>{{ $job->created_at }}</td>
+                    <td>{{ $task->title }}</td>
+                    <td>{{ $task->code }}</td>
+                    <td>{{ $task->created_at }}</td>
                     <td>
                         <input 
                           type="checkbox" 
-                          checked="{{$job->active}}" 
+                          checked="{{$task->active}}" 
                           class="checkbox" 
-                          data-id="{{$job->id}}"
+                          data-id="{{$task->id}}"
                         >
                     </td>
                     <td class="text-right">
-                      <a href="{{route('job.edit',['job' => $job->id])}}" class="btn btn-primary">
+                      <a href="{{route('task.edit',['task' => $task->id])}}" class="btn btn-primary">
                           <i class="fa fa-edit"></i>
                       </a>
                       <a href="#" class="btn btn-primary deleteBtn">
                           <i class="fa fa-trash"></i>
                       </a>
-                      <form method="post" action="{{route('job.destroy', ['job' => $job->id])">
+                      <form method="post" action="{{route('task.destroy', ['task' => $task->id])">
                         {{csrf_field()}}
                         {{method_field('DESTROY')}}
                       </form>
@@ -101,7 +97,7 @@
   <script>
     $(document).ready(function() {
       $('#clearBtn').on('click', function() {
-        window.location.href = @json(route('job.index'));
+        window.location.href = @json(route('task.index'));
       });
 
       $('.deleteBtn').on('click', function() {
@@ -110,7 +106,7 @@
 
       $('.checkbox').on('change', function() {
         $.ajax({
-          url: '/job/' + $(this).data('id') + '/is-active',
+          url: '/task/' + $(this).data('id') + '/is-active',
           beforeSend: function(xhr){
             xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
           },

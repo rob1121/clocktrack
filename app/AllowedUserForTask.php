@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AllowUserForTask extends Model
+class AllowedUserForTask extends Model
 {
     protected $table = 'allowed_user_for_task';
     protected $fillable = [

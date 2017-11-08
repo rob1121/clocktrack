@@ -31,6 +31,10 @@ class User extends Authenticatable
     protected $appends = [
         'fullname', 'fullname_with_no_comma'
     ];
+
+    public function user() {
+        return $this->hasOne(Company::class);
+    }
     
     public function allowUserForJob() {
         return $this->hasMany(AllowUserForJob::class);

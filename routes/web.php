@@ -34,4 +34,10 @@ Route::resource('timesheet','Timesheet\TimesheetController', ['only' => ['index'
 Route::put('shift/update','ShiftController@update')->name('shift.batch_update');
 Route::resource('shift','ShiftController', ['only' => ['index', 'store', 'update']]);
 Route::resource('employee','EmployeeController', ['except' => ['show']]);
-Route::resource('job','JobController');
+
+
+Route::put('job/{job}/is-active', 'JobController@isActive')->name('job.is_active');
+Route::resource('job','JobController',['except' => 'show']);
+
+Route::put('task/{task}/is-active', 'TaskController@isActive')->name('task.is_active');
+Route::resource('task','TaskController',['except' => 'show']);

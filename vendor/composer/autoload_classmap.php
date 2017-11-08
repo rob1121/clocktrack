@@ -6,12 +6,13 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\AllowUserForTask' => $baseDir . '/app/AllowUserForTask.php',
     'App\\AllowedTaskForJob' => $baseDir . '/app/AllowedTaskForJob.php',
     'App\\AllowedUserForJob' => $baseDir . '/app/AllowedUserForJob.php',
+    'App\\AllowedUserForTask' => $baseDir . '/app/AllowedUserForTask.php',
     'App\\Biometric' => $baseDir . '/app/Biometric.php',
     'App\\BreakTime' => $baseDir . '/app/BreakTime.php',
     'App\\Clocktrack\\Option' => $baseDir . '/app/clocktrack/Option.php',
+    'App\\Company' => $baseDir . '/app/Company.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
@@ -27,6 +28,7 @@ return array(
     'App\\Http\\Controllers\\Schedule\\ByJobController' => $baseDir . '/app/Http/Controllers/Schedule/ByJobController.php',
     'App\\Http\\Controllers\\Schedule\\ScheduleController' => $baseDir . '/app/Http/Controllers/Schedule/ScheduleController.php',
     'App\\Http\\Controllers\\ShiftController' => $baseDir . '/app/Http/Controllers/ShiftController.php',
+    'App\\Http\\Controllers\\TaskController' => $baseDir . '/app/Http/Controllers/TaskController.php',
     'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => $baseDir . '/app/Http/Controllers/Timesheet/TimesheetController.php',
     'App\\Http\\Controllers\\TimeclockController' => $baseDir . '/app/Http/Controllers/TimeclockController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',

@@ -335,12 +335,13 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
     );
 
     public static $classMap = array (
-        'App\\AllowUserForTask' => __DIR__ . '/../..' . '/app/AllowUserForTask.php',
         'App\\AllowedTaskForJob' => __DIR__ . '/../..' . '/app/AllowedTaskForJob.php',
         'App\\AllowedUserForJob' => __DIR__ . '/../..' . '/app/AllowedUserForJob.php',
+        'App\\AllowedUserForTask' => __DIR__ . '/../..' . '/app/AllowedUserForTask.php',
         'App\\Biometric' => __DIR__ . '/../..' . '/app/Biometric.php',
         'App\\BreakTime' => __DIR__ . '/../..' . '/app/BreakTime.php',
         'App\\Clocktrack\\Option' => __DIR__ . '/../..' . '/app/clocktrack/Option.php',
+        'App\\Company' => __DIR__ . '/../..' . '/app/Company.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
@@ -356,6 +357,7 @@ class ComposerStaticInit42f8fea8fa834ce3f6133a5b98c65edd
         'App\\Http\\Controllers\\Schedule\\ByJobController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ByJobController.php',
         'App\\Http\\Controllers\\Schedule\\ScheduleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Schedule/ScheduleController.php',
         'App\\Http\\Controllers\\ShiftController' => __DIR__ . '/../..' . '/app/Http/Controllers/ShiftController.php',
+        'App\\Http\\Controllers\\TaskController' => __DIR__ . '/../..' . '/app/Http/Controllers/TaskController.php',
         'App\\Http\\Controllers\\TimeSheet\\TimesheetController' => __DIR__ . '/../..' . '/app/Http/Controllers/Timesheet/TimesheetController.php',
         'App\\Http\\Controllers\\TimeclockController' => __DIR__ . '/../..' . '/app/Http/Controllers/TimeclockController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',

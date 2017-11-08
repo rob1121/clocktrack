@@ -20,12 +20,17 @@ class CreateJobsTable extends Migration
             $table->string('description')->nullable();
             $table->string('file')->nullable();
             $table->string('color')->default('#3097D1');
+            $table->boolean('track_labor_budget')->default(false);
             $table->integer('total_hour_target')->default(0);
+            $table->boolean('track_when_budget_hits')->default(false);
+            $table->integer('hours_remaining')->default(0);
             $table->string('address');
             $table->string('city');
             $table->string('state');
             $table->string('postal_code');
             $table->string('country');
+            $table->boolean('remind_clockout')->default(false);
+            $table->boolean('remind_clockin')->default(false);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
