@@ -46,6 +46,7 @@
         action="{{route('timeclock.update', ['biometric' => $last_biometric->id])}}" 
         method="post"
         id="updateForm"
+        enctype="multipart/form-data"
       >
         {{method_field('PUT')}}
         {{csrf_field()}}
@@ -89,6 +90,10 @@
         </div>
 
         <div id="noteContainer" hidden>
+          <div class="form-group">
+            <label class="control-label">Attachment</label>
+            <input type="file" name="file" id="file">
+          </div>
            <div class="form-group">
             <label class="control-label">Notes(Optional)</label>
             @component('components.textarea',[

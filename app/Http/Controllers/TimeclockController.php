@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Biometric;
 use App\Job;
 use App\Task;
@@ -105,9 +106,15 @@ class TimeclockController extends Controller
                 'start_time' => 'required',
                 'end_date' => 'required',
                 'end_time' => 'required',
+                'file' => 'mimes:xls,xlsx,pdf,doc,docx,csv,jpeg,png,bmp,gif,svg',
             ]
         );
         
+        $path = '';
+        if($request->has('file')) {
+            $path = $request->file->store('timeclock');
+        }
+
         $employees = explode(",", $request->employees);
         collect($employees)->map(function ($employee) use ($request) {
             $timeInDate = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
@@ -123,7 +130,7 @@ class TimeclockController extends Controller
             $biometric->job = $request->job;
             $biometric->task = $request->task;
             $biometric->notes = $request->notes;
-            $biometric->file = $request->file;
+            $biometric->file = $path;
             $biometric->active = isset($request->active) ? $request->active : 0;
             $biometric->lng = isset($request->lng) ? $request->lng : '';
             $biometric->lat = isset($request->lat) ? $request->lat : '';
@@ -142,17 +149,24 @@ class TimeclockController extends Controller
                 'notes' => 'max:500',
                 'end_date' => 'required',
                 'end_time' => 'required',
+                'file' => 'mimes:xls,xlsx,pdf,doc,docx,csv,jpeg,png,bmp,gif,svg',
             ]
         );
+        
+        $biometric = Biometric::find($biometric);
+        $path = '';
+        if($request->has('file')) {
+            Storage::delete($biometric->file);
+            $path = $request->file->store('timeclock');
+        }
 
         $timeOutDate = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
         $timeOutHours = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
-
-        $biometric = Biometric::find($biometric);
+        
         $biometric->time_out = "{$timeOutDate} {$timeOutHours}";
         $biometric->notes = $request->notes;
         $biometric->active = 0;
-        $biometric->file = $request->file;
+        $biometric->file = $path;
 
         $biometric->save();
 

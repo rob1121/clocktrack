@@ -23,6 +23,8 @@ Route::get('/schedule/employee/{user}', 'Schedule\ByEmployeeController@index')->
 Route::get('/schedule/job', 'Schedule\ByJobController@index')->name('schedule.by_job');
 Route::resource('schedule', 'Schedule\ScheduleController');
 
+Route::resource('biometric', 'BiometricController');
+
 Route::get('timeclock/{user}/timesheet', 'TimeclockController@timesheet')->name('timeclock.timesheet');
 Route::get('timeclock/calendar', 'TimeclockController@calendar')->name('timeclock.calendar');
 

@@ -19,7 +19,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach($biometrics->pluck('job') as $job)
+                    @foreach($biometrics->unique('job')->pluck('job') as $job)
                         <tr>
                             <td>
                                 <span>{{$job}}</span>

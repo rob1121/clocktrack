@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Schedule;
 
-use App\Schedule;
+use App\Biometric;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class ByJobController extends Controller
 {
@@ -16,8 +17,11 @@ class ByJobController extends Controller
     public function index()
     {
         $this->middleware('admin');
-        $schedules = Schedule::where('job', \Request::get('job'));
-        $schedules->where('start_date', \Request::get('date'));
+
+        $from = Carbon::parse(\Request::get('date'))->startOfDay()->format(config('constant.dateTimeFormat'));
+        $to = Carbon::parse(\Request::get('date'))->endOfDay()->format(config('constant.dateTimeFormat'));
+        $schedules = Biometric::where('job', str_replace('-',' ', \Request::get('job')));
+        $schedules->whereBetween('time_in', [$from, $to]);
         
         return view('schedules.by_job.index', ['schedules' => $schedules->get()]);
     }

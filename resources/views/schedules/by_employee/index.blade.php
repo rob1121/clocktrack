@@ -42,7 +42,7 @@
         </div>
         <div class="col-xs-1">
             <a 
-            href="{{route('schedule.create')}}"
+            href="{{route('biometric.create')}}"
             id="next"
             class="btn btn-success"
             >

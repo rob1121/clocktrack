@@ -21,7 +21,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <form action="{{route('timeclock.store')}}" method="post">
+    <form action="{{route('timeclock.store')}}" method="post" enctype="multipart/form-data">
       {{csrf_field()}}
       <input type="hidden" name="active" id="active" value="1">
       <input type="hidden" name="start_date" id="start_date">
@@ -54,6 +54,11 @@
       </div>
 
       
+
+      <div class="form-group">
+        <label class="control-label">Attachment:</label>
+        <input type="file" name="file" id="file">
+      </div>
 
       <div class="form-group">
         <label class="control-label">Notes(Optional)</label>
