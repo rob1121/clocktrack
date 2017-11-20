@@ -34,7 +34,7 @@ Route::resource('breaktime', 'BreaktimeController', ['only' => ['store', 'update
 Route::resource('timeclock', 'TimeclockController', ['only' => ['store', 'update']]);
 Route::resource('timesheet','Timesheet\TimesheetController', ['only' => ['index']]);
 Route::put('shift/update','ShiftController@update')->name('shift.batch_update');
-Route::resource('shift','ShiftController', ['only' => ['index', 'store', 'update']]);
+Route::resource('shift','ShiftController');
 Route::resource('employee','EmployeeController', ['except' => ['show']]);
 
 

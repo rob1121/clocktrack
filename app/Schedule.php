@@ -16,9 +16,7 @@ class Schedule extends Model
         'end_date',
         'end_time',
         'job',
-        'task',
-        'file',
-        'job_description',
+        'notes',
     ];
 
     protected $appends = [
@@ -34,7 +32,7 @@ class Schedule extends Model
         $end = Carbon::parse("{$this->end_date}  {$this->end_time}");
         $minutesLength = $start->diffInMinutes($end);
         
-        return $minutesLength - $this->breaktime->sum('duration_in_minutes');
+        return $minutesLength;
     }
 
     public function getStartDatetimeAttribute() {

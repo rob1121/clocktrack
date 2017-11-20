@@ -125,7 +125,6 @@
 				itemId: $(this).data('id'),
 				color: $(this).data('color'),
 				title: $.trim($(this).text()), // use the element's text as the event title
-				stick: true // maintain when user navigates (see docs on the renderEvent method)
 			});
 
 
@@ -144,8 +143,7 @@
 
 				$.get(@json(route('api.employees')), self.fillDraggableList);
 				
-				$('#calendar').fullCalendar('destroy');
-				self.initScheduler('Jobs', @json(route('api.jobs.all')));
+				self.rerenderEvents();
 		};
 
 		self.calendarByEmployeeCallback = function(data) {
@@ -154,8 +152,7 @@
 
 				$.get(@json(route('api.jobs')), self.fillDraggableList);
 
-				$('#calendar').fullCalendar('destroy');
-				self.initScheduler('Employees', @json(route('api.schedules.all')));
+				self.rerenderEvents();
 		};
 
 		self.calendarByJob = function() {
@@ -190,25 +187,56 @@
 
 		self.calendarEventResize = function (event, delta, revertFunc, jsEvent, ui, view) {
 			var duration = moment.duration(event.end.diff(event.start));
-			if(duration.asHours() > 24) revertFunc();
+			if(duration.asHours() > 24) 
+			{
+				revertFunc();
+			} 
+			else 
+			{
+				self.updateDb(event);
+			}
+		}
+
+		self.rerenderEvents = function() {
+			$('#calendar').fullCalendar('destroy');
+			if(self.grouping === 'job') 
+			{
+				self.initScheduler('Employees', @json(route('api.jobs.all')));
+			} 
+			else 
+			{
+				self.initScheduler('Jobs', @json(route('api.schedules.all')));
+			}
 		}
 
 		self.updateDb = function(event) {
+			var resource = $("#calendar").fullCalendar("getResourceById", event.resourceId);
 			var data = {
 					start: event.start.format('Y-MM-DD HH:mm:ss'),
-					end: event.end.format('Y-MM-DD HH:mm:ss'),
-					scheduleId: event.scheduleId,
-					jobs: $("#calendar").fullCalendar("getResourceById", event.resourceId),
+					end: event.end ? event.end.format('Y-MM-DD HH:mm:ss') : event.start.format('Y-MM-DD 23:59:59'),
+					job: null,
+					employee: null,
 			};
 
+			if (self.grouping === 'job') {
+				data.employee = event.itemId;
+				data.job = resource.id;
+			} else {
+				data.employee = resource.id;
+				data.job = event.itemId;
+			}
 			$.ajax({
-				url: 'https://clocktrack.dev/shift/' + event.scheduleId,
+				url: '/clocktrack/public/shift/' + event.scheduleId,
 				beforeSend: function(xhr){
 					xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
 				},
 				data: data,
 				dataType: 'JSON',
 				type: 'PUT',
+				success: self.rerenderEvents,
+				error: function(error) {
+					console.log('update failed', error);
+				},
 			});
 		}
 
@@ -216,7 +244,7 @@
 			var resource = $("#calendar").fullCalendar("getResourceById", event.resourceId);
 			var data = {
 					start: event.start.format('Y-MM-DD HH:mm:ss'),
-					end: (event.end || event.start).format('Y-MM-DD HH:mm:ss'),
+					end: event.end ? event.end.format('Y-MM-DD HH:mm:ss') : event.start.format('Y-MM-DD 23:59:59'),
 					job: null,
 					employee: null,
 			};
@@ -237,6 +265,24 @@
 				data: data,
 				dataType: 'JSON',
 				type: 'POST',
+				success: self.rerenderEvents,
+				error: function(error) {
+					console.log('insert failed', error);
+				}
+			});
+		}
+
+		self.deleteSchedule = function(url) {
+			$.ajax({
+				url: url,
+				beforeSend: function(xhr){
+					xhr.setRequestHeader('X-CSRF-TOKEN', $("#token").attr('content'));
+				},
+				type: 'DELETE',
+				success: self.rerenderEvents,
+				error: function(error) {
+					console.log('insert failed', error);
+				}
 			});
 		}
 
@@ -268,19 +314,50 @@
 				resourceLabelText: resourceTitle,
 				resources: self.data,
 				events: jsonUrl,
-				drop: function(date, jsEvent, ui, resourceId) {
-					console.log($('calendar').fullCalendar( 'getEventResource', resourceId ));
-				},
 				eventReceive: self.insertToDb,
-				eventDrop: self.updateDb
+				eventDrop: self.updateDb,
+        eventClick: function(calEvent, jsEvent, view) {
+				},
+        selectable: true,
+				eventRender: function(event, element) {
+					var content = '';
+					content += '<div class="container-fluid">';
+					content += '<div class="row">';
+					content += '<div class="col-xs-6">';
+					content += '<a href="#" data-delurl="' + event.deleteUrl + '" class="text-center deleteButton">Delete</a>';
+					content += '</div>';
+					content += '<div class="col-xs-6">';
+					content += '<a href="#" class="text-center" style="white-space:nowrap">Edit Shift</a>';
+					content += '</div>';
+					content += '</div>';
+					content += '</div>';
+
+					var options = {
+						content: content,
+						container: 'body',
+						html: true,
+						placement: 'auto',
+						title: event.title
+					};
+					$(element).popover(options);
+				}
 			});
 		}
+
+		$(document).on('show.bs.popover', function() {
+			$('.popover').not(this).popover('hide');
+		});
 
 		$(function() { // document ready
 			/* initialize the external events
 			-----------------------------------------------------------------*/
-			
 			self.calendarByEmployee();
+		});
+
+		$(document).on('click', '.deleteButton', function(e) {
+			e.preventDefault();
+			self.deleteSchedule($(this).data('delurl'));
+			$('.popover').popover('hide');
 		});
 	</script>
 @endpush

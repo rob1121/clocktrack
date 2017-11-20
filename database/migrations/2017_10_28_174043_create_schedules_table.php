@@ -20,11 +20,8 @@ class CreateSchedulesTable extends Migration
             $table->string('start_time');
             $table->string('end_date');
             $table->string('end_time');
-            $table->string('job');
-            $table->string('task');
-            $table->string('job_description')->nullable();
-            $table->string('file')->nullable();
-            $table->boolean('active')->default(true);
+            $table->string('job')->nullable();
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }

@@ -21,14 +21,16 @@ function schedule($schedules) {
     $schedules = $schedules->map(function($schedule) {
         return [
             'id' => $schedule->id, 
-            'resourceId' => $schedule->id, 
+            'resourceId' => $schedule->user_id, 
             'scheduleId' => $schedule->id,
+            'itemId' => $schedule->id,
             'title' => $schedule->job,
             'body' => $schedule->job_description ?: '',
             'schedule' => Carbon::parse($schedule->start_date)->format('m/d'),
             'start' => "{$schedule->start_date} {$schedule->start_time}",
             'end' => "{$schedule->end_date} {$schedule->end_time}",
             'color' => "red",
+            'deleteUrl' => route('shift.destroy', ['schedule' => $schedule->id])
         ];
     });
 
@@ -36,8 +38,12 @@ function schedule($schedules) {
 }
 
 Route::get('/schedules', function (Request $request) {
-    $start = Carbon::parse($request->start)->format(config('constant.dateFormat'));
-    $end = Carbon::parse($request->end)->format(config('constant.dateFormat'));
+    $start = $request->start ? Carbon::parse($request->start) : Carbon::now()->startOfMonth();
+    $start = $start->format(config('constant.dateFormat'));
+
+    $end = $request->end ? Carbon::parse($request->end) : Carbon::now()->endOfMonth();
+    $end = $end->format(config('constant.dateFormat'));
+
     $schedules = Schedule::whereBetween('start_date', [$start, $end]);
     $schedules = $schedules->where('user_id', $request->user);
     $schedules = $schedules->get();
@@ -46,17 +52,25 @@ Route::get('/schedules', function (Request $request) {
 })->name('api.schedules');
 
 Route::get('/schedules/all', function (Request $request) {
-    $start = Carbon::parse($request->start)->format(config('constant.dateFormat'));
-    $end = Carbon::parse($request->end)->format(config('constant.dateFormat'));
+    $start = $request->start ? Carbon::parse($request->start) : Carbon::now()->startOfMonth();
+    $start = $start->format(config('constant.dateFormat'));
+
+    $end = $request->end ? Carbon::parse($request->end) : Carbon::now()->endOfMonth();
+    $end = $end->format(config('constant.dateFormat'));
+
     $schedules = Schedule::whereBetween('start_date', [$start, $end]);
     $schedules = $schedules->get();
-
+    
     return schedule($schedules);
 })->name('api.schedules.all');
 
 Route::get('/jobs/all', function (Request $request) {
-    $start = Carbon::parse($request->start)->format(config('constant.dateFormat'));
-    $end = Carbon::parse($request->end)->format(config('constant.dateFormat'));
+    $start = $request->start ? Carbon::parse($request->start) : Carbon::now()->startOfMonth();
+    $start = $start->format(config('constant.dateFormat'));
+
+    $end = $request->end ? Carbon::parse($request->end) : Carbon::now()->endOfMonth();
+    $end = $end->format(config('constant.dateFormat'));
+
     $jobs = Schedule::whereBetween('start_date', [$start, $end]);
     $jobs = $jobs->get();
 
@@ -69,7 +83,8 @@ Route::get('/jobs/all', function (Request $request) {
             'schedule' => Carbon::parse($job->start_date)->format('m/d'),
             'start' => "{$job->start_date} {$job->start_time}",
             'end' => "{$job->end_date} {$job->end_time}",
-            'color' => "red",
+            'color' => $job->color,
+            'deleteUrl' => route('shift.destroy', ['schedule' => $job->id])
         ];
     });
 

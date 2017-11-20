@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Job;
 use App\Schedule;
 use App\User;
+use Carbon\Carbon;
 
 class ShiftController extends Controller
 {
@@ -33,31 +34,32 @@ class ShiftController extends Controller
     }
 
     public function store(Request $request) {
-        return [
-            'request' => $request->all(),
-            'job' => Job::find($request->job),
-            'employee' => User::find($request->employee)
-        ];
-
+        $job = Job::find($request->job);
+        $employee = User::find($request->employee);
+        
         $schedule = new Schedule;
-        $schedule->end_date = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
-        $schedule->end_time = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
-        $schedule->start_date = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
-        $schedule->start_time = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
-        $schedule->user_id = $request->$employee;
-        $schedule->job = $request->job;
-        $schedule->task = $request->task;
-
+        $schedule->end_date = Carbon::parse($request->end)->format(config('constant.dateFormat'));
+        $schedule->end_time = Carbon::parse($request->end)->format(config('constant.timeFormat'));
+        $schedule->start_date = Carbon::parse($request->start)->format(config('constant.dateFormat'));
+        $schedule->start_time = Carbon::parse($request->start)->format(config('constant.timeFormat'));
+        $schedule->user_id = $employee->id;
+        $schedule->job = $job->title;
+        $schedule->notes = $request->notes;
         $schedule->save();
-
-
+        
         return [
             'message' => 'success',
             'success' => true,
         ];
     }
 
-    public function update(Request $request, Schedule $schedule) {
+    public function update(Request $request,$shift) {
+        $job = Job::find($request->job);
+        $employee = User::find($request->employee);
+        $schedule = Schedule::find($shift);
+
+        $schedule->user_id = $employee->id;
+        $schedule->job = $job->title;
         $schedule->start_date = Carbon::parse($request->start)->format('Y-m-d');
         $schedule->start_time = Carbon::parse($request->start)->format('H:i:s');
         $schedule->end_date = Carbon::parse($request->end)->format('Y-m-d');
@@ -67,6 +69,17 @@ class ShiftController extends Controller
         return [
             'success' => true,
             'message' => 'Successfully updated'
+        ];
+    }
+
+
+    public function destroy($schedule) {
+        $schedule = Schedule::find($schedule);
+        $schedule->delete();
+        
+        return [
+            'message' => 'success',
+            'success' => true,
         ];
     }
 }
