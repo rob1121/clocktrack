@@ -327,7 +327,7 @@
 					content += '<a href="#" data-delurl="' + event.deleteUrl + '" class="text-center deleteButton">Delete</a>';
 					content += '</div>';
 					content += '<div class="col-xs-6">';
-					content += '<a href="#" class="text-center" style="white-space:nowrap">Edit Shift</a>';
+					content += '<a href="' + event.editUrl + '" class="text-center" style="white-space:nowrap">Edit Shift</a>';
 					content += '</div>';
 					content += '</div>';
 					content += '</div>';

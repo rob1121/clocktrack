@@ -56,8 +56,8 @@
                   <tr>
                     <th>Name</th>
                     <th>Number</th>
-                    <th>Hour Budgeted</th>
-                    <th>Houts Worked</th>
+                    <th class="text-right">Hour Budgeted</th>
+                    <th class="text-right">Houts Worked</th>
                     <th>Date Created</th>
                     <th>Active</th>
                     <th></th>
@@ -67,9 +67,9 @@
                   @foreach ($jobs as $job)
                     <tr>
                     <td>{{ $job->title }}</td>
-                    <td>{{ $job->number }}</td>
-                    <td>{{ $job->total_hour_target ?: '-' }}</td>
-                    <td>{{ $job->hours_remaining ?: '-' }}</td>
+                    <td>{{ $job->number ?: '-' }}</td>
+                    <td class="text-right">{{ $job->total_hour_target ?: '-' }}</td>
+                    <td class="text-right">{{ $job->hours_remaining ?: '-' }}</td>
                     <td>{{ Carbon::parse($job->created_at)->format('Y-m-d') }}</td>
                     <td>
                         <input 

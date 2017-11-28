@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Biometric;
+use App\Schedule;
 use App\Job;
 use App\Task;
 use App\BreakTime;
@@ -140,10 +141,10 @@ class BiometricController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Schedule $schedule)
+    public function edit(Biometric $biometric)
     {
         return view('schedules.edit', [
-            'schedule' => $schedule,
+            'biometric' => $biometric,
             'employeeOptions' => Option::employees(),
             'breaktimeOptions' => Option::breakTime(),
             'jobOptions' => Job::selectOptions(),

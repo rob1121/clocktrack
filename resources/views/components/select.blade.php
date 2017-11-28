@@ -5,6 +5,8 @@
 >
   <option></option>
   @foreach($options as $option)
+    @if(isset($initVal))
+    @endif
     <option value="{{$option->value}}" @if($value === $option->value) selected @endif>
       {{$option->text}}
     </option>

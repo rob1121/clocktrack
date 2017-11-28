@@ -32,7 +32,7 @@ class User extends Authenticatable
         'fullname', 'fullname_with_no_comma'
     ];
 
-    public function user() {
+    public function company() {
         return $this->hasOne(Company::class);
     }
     

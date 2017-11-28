@@ -116,7 +116,7 @@ class TimeclockController extends Controller
         }
 
         $employees = explode(",", $request->employees);
-        collect($employees)->map(function ($employee) use ($request) {
+        collect($employees)->map(function ($employee) use ($request, $path) {
             $timeInDate = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
             $timeInHours = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
 

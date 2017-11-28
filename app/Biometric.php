@@ -34,4 +34,20 @@ class Biometric extends Model
         
         return $minutesLength - $this->breaktime->sum('duration_in_minutes');
     }
+    
+    public function getStartTimeAttribute() {
+        return Carbon::parse($this->time_in)->format('H:s:i');
+    }
+    
+    public function getEndTimeAttribute() {
+        return Carbon::parse($this->time_out)->format('H:s:i');
+    }
+    
+    public function getStartDateAttribute() {
+        return Carbon::parse($this->date_in)->format('m/d/Y');
+    }
+    
+    public function getEndDateAttribute() {
+        return Carbon::parse($this->date_out)->format('m/d/Y');
+    }
 }

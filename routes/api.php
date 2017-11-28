@@ -17,8 +17,8 @@ use Carbon\Carbon;
 |
 */
 function schedule($schedules) {
-
     $schedules = $schedules->map(function($schedule) {
+        
         return [
             'id' => $schedule->id, 
             'resourceId' => $schedule->user_id, 
@@ -29,8 +29,9 @@ function schedule($schedules) {
             'schedule' => Carbon::parse($schedule->start_date)->format('m/d'),
             'start' => "{$schedule->start_date} {$schedule->start_time}",
             'end' => "{$schedule->end_date} {$schedule->end_time}",
-            'color' => "red",
-            'deleteUrl' => route('shift.destroy', ['schedule' => $schedule->id])
+            'color' => $schedule->color,
+            'deleteUrl' => route('shift.destroy', ['schedule' => $schedule->id]),
+            'editUrl' => route('shift.edit', ['schedule' => $schedule->id])
         ];
     });
 
@@ -84,7 +85,8 @@ Route::get('/jobs/all', function (Request $request) {
             'start' => "{$job->start_date} {$job->start_time}",
             'end' => "{$job->end_date} {$job->end_time}",
             'color' => $job->color,
-            'deleteUrl' => route('shift.destroy', ['schedule' => $job->id])
+            'deleteUrl' => route('shift.destroy', ['schedule' => $job->id]),
+            'editUrl' => route('shift.edit', ['schedule' => $job->id])
         ];
     });
 
@@ -98,7 +100,6 @@ Route::get('/employees', function (Request $request) {
             'id' => $employee->id,
             'employeeId' => $employee->id,
             'title' => $employee->fullname,
-            'color' => "red",
         ];
     });
 
@@ -114,7 +115,7 @@ Route::get('/jobs', function (Request $request) {
             'id' => $job->id,
             'jobId' => $job->id,
             'title' => $job->title,
-            'color' => "red",
+            'color' => $job->color,
         ];
     });
 

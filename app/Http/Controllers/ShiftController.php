@@ -7,6 +7,7 @@ use App\Job;
 use App\Schedule;
 use App\User;
 use Carbon\Carbon;
+use App\Clocktrack\Option;
 
 class ShiftController extends Controller
 {
@@ -44,6 +45,7 @@ class ShiftController extends Controller
         $schedule->start_time = Carbon::parse($request->start)->format(config('constant.timeFormat'));
         $schedule->user_id = $employee->id;
         $schedule->job = $job->title;
+        $schedule->color = $job->color;
         $schedule->notes = $request->notes;
         $schedule->save();
         
@@ -53,23 +55,47 @@ class ShiftController extends Controller
         ];
     }
 
-    public function update(Request $request,$shift) {
+    public function edit($shift) {
+        $schedule = Schedule::find($shift);
+        $employees = User::all();
+        $employees = $employees->map(function($employee) {
+            return (object)[
+                'id' => $employee->id,
+                'title' => $employee->fullname,
+            ];
+        });
+
+        $jobs = Job::all()->map(function($job) {
+            return (object)[
+                'id' => $job->id,
+                'title' => $job->title,
+            ];
+        });
+
+        return view('scheduler.edit', [
+            'schedule' => $schedule,
+            'employees' => $employees,
+            'jobs' => $jobs,
+            'breaktimeOptions' => Option::breakTime(),
+            ]);
+    }
+
+    public function update(Request $request, $shift) {
         $job = Job::find($request->job);
         $employee = User::find($request->employee);
         $schedule = Schedule::find($shift);
 
         $schedule->user_id = $employee->id;
         $schedule->job = $job->title;
-        $schedule->start_date = Carbon::parse($request->start)->format('Y-m-d');
-        $schedule->start_time = Carbon::parse($request->start)->format('H:i:s');
-        $schedule->end_date = Carbon::parse($request->end)->format('Y-m-d');
-        $schedule->end_time = Carbon::parse($request->end)->format('H:i:s');
+        $schedule->color = $job->color;
+        $schedule->notes = $request->notes;
+        $schedule->start_date = $request->start_date;
+        $schedule->start_time = $request->start_time;
+        $schedule->end_date = $request->end_date;
+        $schedule->end_time = $request->end_time;
         $schedule->save();
 
-        return [
-            'success' => true,
-            'message' => 'Successfully updated'
-        ];
+        return redirect()->route('shift.index');
     }
 
 

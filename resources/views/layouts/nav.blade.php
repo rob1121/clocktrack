@@ -107,19 +107,14 @@
                         </a>
 
                         <ul class="dropdown-menu" role="menu">
-                            <li>
+                            <!-- <li>
                                 <a href="#">
                                     Company Settings
                                 </a>
-                            </li>
+                            </li> -->
                             <li>
                                 <a href="#">
                                     Notifications
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    Audit Logs
                                 </a>
                             </li>
                             <li>

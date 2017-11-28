@@ -17,6 +17,7 @@ class Schedule extends Model
         'end_time',
         'job',
         'notes',
+        'color'
     ];
 
     protected $appends = [

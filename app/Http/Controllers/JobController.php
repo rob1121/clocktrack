@@ -12,6 +12,8 @@ use Storage;
 
 class JobController extends Controller
 {
+    const DONT_TRACK = 0;
+    const NONE = 0;
     public function __construct() {
         $this->middleware('admin');
     }
@@ -24,9 +26,9 @@ class JobController extends Controller
     {
         if(\Request::has('q')) {
             $q = \Request::get('q');
-            $jobs = Job::where('title', 'LIKE', "%{$q}%")
-            ->orWhere('number', 'LIKE', "%{$q}%")
-            ->paginate(10);
+            $jobs = Job::where('title', 'LIKE', "%{$q}%");
+            $jobs->orWhere('number', 'LIKE', "%{$q}%");
+            $jobs = $jobs->paginate(10);
         } else {
             $jobs = Job::paginate(10);
         }
@@ -77,12 +79,8 @@ class JobController extends Controller
             'description' => 'max:500',
             'file' => 'mimes:xls,xlsx,pdf,doc,docx,csv,jpeg,png,bmp,gif,svg',
             'color' => 'required',
-            'total_hour_target' => 'required|numeric',
-            'address' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'postal_code' => 'required|numeric',
-            'country' => 'required',
+            'total_hour_target' => [($request->track_labor_budget ? 'required' : ''), 'numeric'],
+            'hours_remaining' => [($request->track_when_budget_hits ? 'required' : ''), 'numeric'],
         ]);
         
         $path = '';
@@ -96,17 +94,17 @@ class JobController extends Controller
         $job->description = $request->description;
         $job->file = $path;
         $job->color = $request->color;
-        $job->track_labor_budget = $request->track_labor_budget;
-        $job->track_when_budget_hits = $request->track_when_budget_hits;
-        $job->hours_remaining = $request->hours_remaining;
-        $job->total_hour_target = $request->total_hour_target;
+        $job->track_labor_budget = $request->track_labor_budget ?:self::DONT_TRACK;
+        $job->track_when_budget_hits = $request->track_when_budget_hits ?:self::DONT_TRACK;
+        $job->hours_remaining = $request->hours_remaining ?:self::NONE;
+        $job->total_hour_target = $request->total_hour_target ?:self::NONE;
         $job->address = $request->address;
         $job->city = $request->city;
         $job->state = $request->state;
         $job->postal_code = $request->postal_code;
         $job->country = $request->country;
-        $job->remind_clockout = $request->remind_clockout;
-        $job->remind_clockin = $request->remind_clockin;
+        $job->remind_clockout = $request->remind_clockout ?: self::DONT_TRACK;
+        $job->remind_clockin = $request->remind_clockin ?: self::DONT_TRACK;
         $job->save();
 
         //link employee
@@ -202,7 +200,6 @@ class JobController extends Controller
      */
     public function update(Request $request, Job $job)
     {
-            
         $this->validate($request, [
             'title' => 'required|max:100',
             'description' => 'max:500',
@@ -223,23 +220,23 @@ class JobController extends Controller
             Storage::delete($job->file);
             $path = $request->file->store('job');
         }
-
+        
         $job->title = $request->title;
         $job->number = $request->number;
         $job->description = $request->description;
         $job->file = $path;
         $job->color = $request->color;
-        $job->track_labor_budget = $request->track_labor_budget;
-        $job->track_when_budget_hits = $request->track_when_budget_hits;
-        $job->hours_remaining = $request->hours_remaining;
-        $job->total_hour_target = $request->total_hour_target;
+        $job->track_labor_budget = $request->track_labor_budget ?: self::DONT_TRACK;
+        $job->track_when_budget_hits = $request->track_when_budget_hits ?: self::DONT_TRACK;
+        $job->hours_remaining = $request->hours_remaining ?: self::NONE;
+        $job->total_hour_target = $request->total_hour_target ?: self::NONE;
         $job->address = $request->address;
         $job->city = $request->city;
         $job->state = $request->state;
         $job->postal_code = $request->postal_code;
         $job->country = $request->country;
-        $job->remind_clockout = $request->remind_clockout;
-        $job->remind_clockin = $request->remind_clockin;
+        $job->remind_clockout = $request->remind_clockout ?: self::DONT_TRACK;
+        $job->remind_clockin = $request->remind_clockin ?: self::DONT_TRACK;
         $job->save();
         
         if($job->allowedUserForJob->isNotEmpty()) {
@@ -254,7 +251,8 @@ class JobController extends Controller
             });
         }
         $allowedEmployees = explode(',', $request->employees);
-        $allowedEmployees = collect($allowedEmployees)->map(function($employee) use($job) {
+        $allowedEmployees = collect($allowedEmployees)->filter();
+        $allowedEmployees = $allowedEmployees->map(function($employee) use($job) {
             return [
                 'user_id' => $employee,
                 'job_id' => $job->id
@@ -264,7 +262,8 @@ class JobController extends Controller
         AllowedUserForJob::insert($allowedEmployees->toArray());
 
         $allowedTasks = explode(',', $request->tasks);
-        $allowedTasks = collect($allowedTasks)->map(function($task) use($job) {
+        $allowedTasks = collect($allowedTasks)->filter();
+        $allowedTasks = $allowedTasks->map(function($task) use($job) {
             return [
                 'task_id' => $task,
                 'job_id' => $job->id

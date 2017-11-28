@@ -20,6 +20,7 @@ class CreateSchedulesTable extends Migration
             $table->string('start_time');
             $table->string('end_date');
             $table->string('end_time');
+            $table->string('color')->default('red');
             $table->string('job')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();
