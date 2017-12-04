@@ -24,7 +24,7 @@ Route::get('/schedule/job', 'Schedule\ByJobController@index')->name('schedule.by
 Route::resource('schedule', 'Schedule\ScheduleController');
 
 Route::resource('biometric', 'BiometricController');
-Route::resource('notification', 'NotificationController');
+Route::resource('notification', 'NotifController');
 
 Route::get('timeclock/{user}/timesheet', 'TimeclockController@timesheet')->name('timeclock.timesheet');
 Route::get('timeclock/calendar', 'TimeclockController@calendar')->name('timeclock.calendar');

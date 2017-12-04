@@ -113,7 +113,7 @@
                                 </a>
                             </li> -->
                             <li>
-                                <a href="{{route('notification.edit',['notificaiotn' => App\Notif::first()->id])}}">
+                                <a href="{{route('notification.index')}}">
                                     Notifications
                                 </a>
                             </li>
