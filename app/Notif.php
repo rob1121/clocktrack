@@ -24,5 +24,15 @@ class Notif extends Model
         'schedule_remind_clock_out',
         'schedule_clock_in',
         'schedule_clock_out',
+        'recipient',
+        'early_in',
+        'early_out',
+        'late_in',
+        'late_out',
+        'missing_in',
+        'missing_out',
+        'unscheduled_time',
+        'location_tampering',
+        'send_notification',
     ];
 }

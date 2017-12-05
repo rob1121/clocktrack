@@ -8,7 +8,7 @@
     <option value="{{$option->value}}">{{$option->text}}</option>
   @endforeach
 </select>
-<input type="hidden" name="{{$name}}" id="{{$name}}">
+<input type="hidden" name="{{$name}}" id="{{$name}}" value="{{$value}}">
 
 @push('script')
 <script>
