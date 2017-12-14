@@ -54,3 +54,11 @@ function convertSecondsToTime($seconds) {
     'seconds' => $seconds % 60,
   ];
 }
+
+function dateFormat($dateTime) {
+  return Carbon::parse($dateTime)->format('Y-m-d');
+}
+
+function timeFormat($dateTime) {
+  return Carbon::parse($dateTime)->format('H:i:s');
+}

@@ -163,6 +163,7 @@ class ScheduleController extends Controller
      */
     public function update(Request $request,Schedule $schedule)
     {
+        return $request->all();
         $dateRange = [
             "date_from" => trim("{$request->start_date} {$request->start_time}"),
             "date_to" => trim("{$request->end_date} {$request->end_time}"),

@@ -25,7 +25,7 @@
 
 						<div class="pull-right">
 
-								<button class="btn btn-sm btn-success" onclick="addClicked()"><i class="fa fa-plus"></i> Add Shift</button>
+								<!-- <button class="btn btn-sm btn-success" onclick="addClicked()"><i class="fa fa-plus"></i> Add Shift</button> -->
 
 								<button class="btn btn-sm btn-default" onclick="showNotifyModal()">Notify Employees</button>
 
@@ -210,6 +210,7 @@
 		}
 
 		self.updateDb = function(event) {
+			console.log(event);
 			var resource = $("#calendar").fullCalendar("getResourceById", event.resourceId);
 			var data = {
 					start: event.start.format('Y-MM-DD HH:mm:ss'),
@@ -281,7 +282,7 @@
 				type: 'DELETE',
 				success: self.rerenderEvents,
 				error: function(error) {
-					console.log('insert failed', error);
+					console.log('deleting failed', error);
 				}
 			});
 		}

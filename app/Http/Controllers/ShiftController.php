@@ -84,18 +84,18 @@ class ShiftController extends Controller
         $job = Job::find($request->job);
         $employee = User::find($request->employee);
         $schedule = Schedule::find($shift);
-
+        
         $schedule->user_id = $employee->id;
         $schedule->job = $job->title;
         $schedule->color = $job->color;
         $schedule->notes = $request->notes;
-        $schedule->start_date = $request->start_date;
-        $schedule->start_time = $request->start_time;
-        $schedule->end_date = $request->end_date;
-        $schedule->end_time = $request->end_time;
+        $schedule->start_date = dateFormat($request->start);
+        $schedule->start_time = timeFormat($request->start);
+        $schedule->end_date = dateFormat($request->end);
+        $schedule->end_time = timeFormat($request->end);
         $schedule->save();
 
-        return redirect()->route('shift.index');
+        // return redirect()->route('shift.index');
     }
 
 

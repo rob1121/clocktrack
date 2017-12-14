@@ -57,7 +57,7 @@
                     <th>Name</th>
                     <th>Number</th>
                     <th class="text-right">Hour Budgeted</th>
-                    <th class="text-right">Houts Worked</th>
+                    <th class="text-right">Hours Worked</th>
                     <th>Date Created</th>
                     <th>Active</th>
                     <th></th>
