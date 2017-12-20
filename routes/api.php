@@ -121,3 +121,7 @@ Route::get('/jobs', function (Request $request) {
 
     return $jobs;
 })->name('api.jobs');
+
+
+
+Route::get('/download/timesheet', 'ExcelDownloadController@timesheet')->name('api.jobs');
