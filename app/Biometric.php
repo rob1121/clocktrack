@@ -12,7 +12,7 @@ class Biometric extends Model
     ];
 
     protected $appends = [
-        'duration_in_minutes'
+        'duration_in_minutes', 'start_date'
     ];
     
     public function user() {
@@ -44,10 +44,10 @@ class Biometric extends Model
     }
     
     public function getStartDateAttribute() {
-        return Carbon::parse($this->date_in)->format('m/d/Y');
+        return Carbon::parse($this->time_in)->format('m/d/Y');
     }
     
     public function getEndDateAttribute() {
-        return Carbon::parse($this->date_out)->format('m/d/Y');
+        return Carbon::parse($this->time_out)->format('m/d/Y');
     }
 }
