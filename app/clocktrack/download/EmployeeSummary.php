@@ -37,6 +37,10 @@ class EmployeeSummary extends ExcelExtract implements Downloadable
         $this->request = $request;
         $this->from = clone $today;
         $this->to = clone $today;
+        
+        // date range
+        $this->from = $this->from->startOfWeek();
+        $this->to = $this->to->endOfWeek();
     }
 
     /**
@@ -98,8 +102,8 @@ class EmployeeSummary extends ExcelExtract implements Downloadable
     protected function fetchTimesheet(&$timesheets)
     {
         // date range
-        $this->from = $this->request->has('from') ? Carbon::parse($this->request->from) : $this->from->startOfWeek();
-        $this->to = $this->request->has('to') ? Carbon::parse($this->request->to) : $this->to->endOfWeek();
+        if($this->request->has('from')) $this->from = Carbon::parse($this->request->from);
+        if($this->request->has('to')) $this->to = Carbon::parse($this->request->to);
 
         //query between date range
         $biometrics = Biometric::whereBetween('time_in', [$this->from, $this->to]);

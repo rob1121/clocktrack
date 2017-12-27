@@ -36,6 +36,10 @@ class JobDetails extends ExcelExtract implements Downloadable {
         $this->request = $request;
         $this->from = clone $today;
         $this->to = clone $today;
+
+        // date range
+        $this->from = $this->from->startOfWeek();
+        $this->to = $this->to->endOfWeek();
     }
 
     /**
@@ -49,9 +53,23 @@ class JobDetails extends ExcelExtract implements Downloadable {
         $this->getRequiredColumns($timesheets);
         
         dd($timesheets);
+
+        $from = clone $this->from;
+        $from = $from->format(cpnfig('constant.dateIndexFormat'));
+
+        $to = clone $this->to;
+        $to = $to->format(cpnfig('constant.dateIndexFormat'));
+
+        $data = [
+            ["Job Details Report"],
+            ["{$from} - {$to}"],
+            [],
+        ];
+
+
         $filename = $this->setFilename('employee details');
         $this->hasCustomHeader(true);
-        $this->export($filename, $timesheets);
+        $this->export($filename, $data);
     }
 
     /**
@@ -62,23 +80,64 @@ class JobDetails extends ExcelExtract implements Downloadable {
      */
     protected function getRequiredColumns(&$timesheets)
     {
-        $timesheets = $timesheets->map(function ($timesheet) {
-            $minutesBreaktime = $timesheet->breaktime->isNotEmpty() ? $timesheet->breaktime->duration_in_minutes : 0;
-            $total_minutes = $timesheet->duration_in_minutes + $minutesBreaktime;
-            return [
-                'first_name' => $timesheet->user->firstname,
-                'last_name' => $timesheet->user->lastname,
-                'job' => $timesheet->job,
-                'task_code' => $timesheet->task_code ? : '-',
-                'job_code' => $timesheet->job_code ? : '-',
-                'task' => $timesheet->task,
-                'time_in' => $timesheet->time_in,
-                'time_out' => $timesheet->time_out,
-                'minutes_breaktime' => $minutesBreaktime ? : '-',
-                'minutes_billable' => $timesheet->duration_in_minutes ? : '-',
-                'minutes_total' => $total_minutes ? : '-',
-                'hours_minutes' => minutesToHourMinuteFormat($total_minutes),
+
+        $timesheets = $timesheets->groupBy('job');
+        $timesheets = $timesheets->map(function ($job) {
+            $retVal = [
+                [],
+                [$job->first()->job],
+                ['Date', 'Employee', 'In', 'Out', 'Task', 'Break', 'Total'],
             ];
+
+            $grandTotal = 0;
+            $job->map(function($timesheet) use(&$retVal, &$grandTotal) {
+                $minutesBreaktime = $timesheet->breaktime->isNotEmpty() ? $timesheet->breaktime->duration_in_minutes : 0;
+                $total_minutes = $timesheet->duration_in_minutes + $minutesBreaktime;
+                $grandTotal += $total_minutes;
+
+                array_push($retVal, [
+                    Carbon::parse($timesheet->time_in)->format(config('constant.dateIndexFormat')),
+                    $timesheet->user->fullname,
+                    $timesheet->time_in,
+                    $timesheet->time_out,
+                    $timesheet->task,
+                    $minutesBreaktime ? : '-',
+                    minutesToHourMinuteFormat($total_minutes),
+                ]);
+            });
+
+            $grandPerEmployeeTotal = 0;
+            $perEmployee = $job->groupBy('fullname');
+            $totalEmployee = $perEmployee->map(function($timesheet) use(&$grandPerEmployeeTotal) {
+                $minutesBreaktime = $timesheet->breaktime->isNotEmpty() ? $timesheet->breaktime->duration_in_minutes : 0;
+                $total_minutes = $timesheet->duration_in_minutes + $minutesBreaktime;
+                $grandPerEmployeeTotal += $total_minutes;
+
+                return [$timesheet->user->fullname, $total_minutes];
+            });
+
+            $grandPerTaskTotal = 0;
+            $perTask = $job->groupBy('fullname');
+            $totalTask = $perTask->map(function($timesheet) use(&$grandPerTaskTotal) {
+                $minutesBreaktime = $timesheet->breaktime->isNotEmpty() ? $timesheet->breaktime->duration_in_minutes : 0;
+                $total_minutes = $timesheet->duration_in_minutes + $minutesBreaktime;
+                $grandPerTaskTotal += $total_minutes;
+
+                return [$timesheet->task, $total_minutes];
+            });
+
+            $retVal[] = ['', '', '', '', '', 'Total', minutesToHourMinuteFormat($grandTotal)];
+            $retVal[] = [];
+            $retVal[] = ['Employee Total'];
+            $retVal[] = $totalEmployee;
+            $retVal[] = ['Total', minutesToHourMinuteFormat($grandPerEmployeeTotal)];
+            $retVal[] = [];
+            $retVal[] = ['Task Total'];
+            $retVal[] = $perTask;
+            $retVal[] = ['Total', minutesToHourMinuteFormat($grandPerTaskTotal)];
+            $retVal[] = [];
+            
+            return $retVal;
         });
     }
 
@@ -89,9 +148,8 @@ class JobDetails extends ExcelExtract implements Downloadable {
      */
     protected function fetchTimesheet(&$timesheets)
     {
-        // date range
-        $this->from = $this->request->has('from') ? Carbon::parse($this->request->from) : $this->from->startOfWeek();
-        $this->to = $this->request->has('to') ? Carbon::parse($this->request->to) : $this->to->endOfWeek();
+        if($this->request->has('from')) $this->from = Carbon::parse($this->request->from);
+        if($this->request->has('to')) $this->to = Carbon::parse($this->request->to);
 
         //query between date range
         $biometrics = Biometric::whereBetween('time_in', [$this->from, $this->to]);
