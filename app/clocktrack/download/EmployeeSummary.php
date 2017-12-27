@@ -7,8 +7,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Clocktrack\Download\Interfaces\Downloadable;
+use App\Clocktrack\Download\Extensions\ExcelExtract;
 
-class EmployeeSummary extends Extensions\Excel implements Downloadable
+class EmployeeSummary extends ExcelExtract implements Downloadable
 {
     /**
      * date from
@@ -39,19 +40,22 @@ class EmployeeSummary extends Extensions\Excel implements Downloadable
     }
 
     /**
-     * download timesheet
+     * download employee summary
+     * 
      * @return void
      */
     public function download()
     {
+        $timesheets = [];
+
         //fetch from database
-        $timesheets = $this->fetchTimesheet();
+        $this->fetchTimesheet($timesheets);
 
         //select required columns only
-        $timesheets = $this->getRequiredColumns($timesheets);
+        $this->getRequiredColumns($timesheets);
 
         //group by employee
-        $timesheets = $timesheets->groupBy('fullname');
+        $this->groupByEmployee($timesheets);
 
         $timesheets = $timesheets->map(function ($timesheet) {
             return (object)[
@@ -63,9 +67,9 @@ class EmployeeSummary extends Extensions\Excel implements Downloadable
         $timesheets = $timesheets->map(function ($timesheet, $employee) {
             return $this->excelDataValidFormat($timesheet, $employee);
         });
-
+        
         $filename = $this->setFilename('employee summary');
-        $this->export($filename, $timesheets->flatten(1));
+        $this->export($filename, $timesheets);
     }
 
     /**
@@ -74,9 +78,9 @@ class EmployeeSummary extends Extensions\Excel implements Downloadable
      * @param array $timesheet
      * @return void
      */
-    protected function getRequiredColumns($timesheets)
+    protected function getRequiredColumns(&$timesheets)
     {
-        return $timesheets->map(function ($timesheet) {
+        $timesheets = $timesheets->map(function ($timesheet) {
             return (object)[
                 'fullname' => $timesheet->user->fullname,
                 'time_in' => $timesheet->time_in,
@@ -91,21 +95,21 @@ class EmployeeSummary extends Extensions\Excel implements Downloadable
      *
      * @return void
      */
-    protected function fetchTimesheet()
+    protected function fetchTimesheet(&$timesheets)
     {
         // date range
         $this->from = $this->request->has('from') ? Carbon::parse($this->request->from) : $this->from->startOfWeek();
         $this->to = $this->request->has('to') ? Carbon::parse($this->request->to) : $this->to->endOfWeek();
 
         //query between date range
-        $timesheets = Biometric::whereBetween('time_in', [$this->from, $this->to]);
+        $biometrics = Biometric::whereBetween('time_in', [$this->from, $this->to]);
         
         //query where employee in employees
         if ($this->request->has('employees')) {
-            $timesheets->whereIn('user_id', $this->request->employees);
+            $biometrics->whereIn('user_id', $this->request->employees);
         }
 
-        return $timesheets->get();
+        $timesheets = $biometrics->get();
     }
 
     /**
@@ -145,5 +149,16 @@ class EmployeeSummary extends Extensions\Excel implements Downloadable
         }
 
         return $retVal;
+    }
+
+    /**
+     * group by employee
+     *
+     * @param array $timesheets
+     * @return void
+     */
+    protected function groupByEmployee(&$timesheets)
+    {
+        $timesheets = $timesheets->groupBy('fullname');
     }
 }

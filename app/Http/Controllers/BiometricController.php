@@ -105,7 +105,9 @@ class BiometricController extends Controller
             $biometric->time_in = "{$date_in} {$time_in}";
             $biometric->user_id = $employee;
             $biometric->job = $request->job;
+            $biometric->job_code = Job::whereTitle($request->job)->first()->number;
             $biometric->task = $request->task;
+            $biometric->task_code = Task::whereTitle($request->task)->first()->code;
             $biometric->notes = $request->notes;
             $biometric->file = $path;
             $biometric->active = isset($request->active) ? $request->active : 0;
@@ -214,7 +216,9 @@ class BiometricController extends Controller
         $biometric->time_out = "{$date_out} {$time_out}";
         $biometric->time_in = "{$date_in} {$time_in}";
         $biometric->job = $request->job;
+        $biometric->job_code = Job::whereTitle($request->job)->first()->number;
         $biometric->task = $request->task;
+        $biometric->task_code = Task::whereTitle($request->task)->first()->code;
         $biometric->notes = $request->notes;
         $biometric->active = 0;
         $biometric->lng = isset($request->lng) ? $request->lng : '';

@@ -2,12 +2,23 @@
 
 namespace App\Clocktrack\Download\Extensions;
 
-class Excel 
+use Maatwebsite\Excel\Facades\Excel;
+
+class ExcelExtract
 {
+    protected $hasCustomHeader = 0;
+
+    /**
+     * export to excel
+     *
+     * @param [type] $filename
+     * @param [type] $data
+     * @return void
+     */
     public function export($filename, $data) 
     {
         //export to excel
-        Excel::create($filename, function ($excel) use ($timesheets) {
+        Excel::create($filename, function ($excel) use ($data) {
             $this->setWorkBook($excel, $data);
         })->export('xls');
     }
@@ -35,7 +46,20 @@ class Excel
      */
     protected function setWorkSheet($sheet, $timesheets)
     {
-        $sheet->fromArray($timesheets);
+        $data = $this->hasCustomHeader ? [$timesheets] : [$timesheets, null, 'A1', true, false];
+
+        $sheet->fromArray($data);
+    }
+
+    /**
+     * set as having a custom header
+     *
+     * @param [type] $bool
+     * @return boolean
+     */
+    protected function hasCustomHeader($bool) 
+    {
+        $this->hasCustomHeader = $bool;
     }
 
     /**

@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class Biometric extends Model
 {
     protected $fillable = [
-        'user_id', 'time_in', 'time_out', 'job', ' task', 'notes', 'active', 'lng', 'lat', 'file'
+        'user_id', 'time_in', 'time_out', 'job', ' task', 'notes', 'active', 'lng', 'lat', 'file', 'task_code', 'job_code',
     ];
 
     protected $appends = [

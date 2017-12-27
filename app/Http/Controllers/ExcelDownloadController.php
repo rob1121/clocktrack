@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use App\Clocktrack\Download\Interfaces\Downloadable;
 use App\Clocktrack\Download\Timesheet;
 use App\Clocktrack\Download\EmployeeSummary;
+use App\Clocktrack\Download\EmployeeDetails;
+use App\Clocktrack\Download\JobDetails;
 
 class ExcelDownloadController extends Controller {
 
@@ -32,9 +34,37 @@ class ExcelDownloadController extends Controller {
         $this->download(new Timesheet($request));
     }
 
-    public function employeeSummary(Request $request) 
+    /**
+     * download employee summary
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function employeeSummary(Request $request)
     {
         $this->download(new EmployeeSummary($request));
+    }
+
+    /**
+     * download employee details
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function employeeDetails(Request $request)
+    {
+        $this->download(new EmployeeDetails($request));
+    }
+
+    /**
+     * download employee details
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function jobDetails(Request $request)
+    {
+        $this->download(new JobDetails($request));
     }
 
     /**

@@ -19,7 +19,9 @@ class CreateBiometricsTable extends Migration
             $table->string('time_in')->nullable();
             $table->string('time_out')->nullable();
             $table->string('job');
+            $table->string('job_code');
             $table->string('task');
+            $table->string('task_code');
             $table->string('lat');
             $table->string('lng');
             $table->string('file')->nullable();
