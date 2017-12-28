@@ -104,7 +104,7 @@
 		self.fillDraggableList = function(data) {
 			var ul = $('.list-group');
 			ul.empty();
-
+			
 			data.map(function(data) {
 				var list = '';
 				

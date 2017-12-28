@@ -12,6 +12,9 @@ use App\Clocktrack\Download\Timesheet;
 use App\Clocktrack\Download\EmployeeSummary;
 use App\Clocktrack\Download\EmployeeDetails;
 use App\Clocktrack\Download\JobDetails;
+use App\Clocktrack\Download\TaskDetails;
+use App\Clocktrack\Download\JobSummary;
+use App\Clocktrack\Download\TaskSummary;
 
 class ExcelDownloadController extends Controller {
 
@@ -32,6 +35,28 @@ class ExcelDownloadController extends Controller {
     public function timesheet(Request $request)
     {
         $this->download(new Timesheet($request));
+    }
+
+    /**
+     * download job summary
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function jobSummary(Request $request)
+    {
+        $this->download(new JobSummary($request));
+    }
+
+    /**
+     * download task summary
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function taskSummary(Request $request)
+    {
+        $this->download(new TaskSummary($request));
     }
 
     /**
@@ -57,7 +82,7 @@ class ExcelDownloadController extends Controller {
     }
 
     /**
-     * download employee details
+     * download job details
      *
      * @param Request $request
      * @return void
@@ -65,6 +90,17 @@ class ExcelDownloadController extends Controller {
     public function jobDetails(Request $request)
     {
         $this->download(new JobDetails($request));
+    }
+
+    /**
+     * download task details
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function taskDetails(Request $request)
+    {
+        $this->download(new TaskDetails($request));
     }
 
     /**

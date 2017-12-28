@@ -46,9 +46,8 @@ class ExcelExtract
      */
     protected function setWorkSheet($sheet, $timesheets)
     {
-        $data = $this->hasCustomHeader ? [$timesheets] : [$timesheets, null, 'A1', true, false];
-
-        $sheet->fromArray($data);
+        $data = $this->hasCustomHeader ? [$timesheets, null, 'A1', true, false] : [$timesheets];
+        $sheet->fromArray(...$data);
     }
 
     /**

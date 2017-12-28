@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 use App\Job;
 use App\Biometric;
 
-class JobDetails extends ExcelExtract implements Downloadable {
+class TaskDetails extends ExcelExtract implements Downloadable
+{
     /**
      * date from
      *
@@ -59,14 +60,14 @@ class JobDetails extends ExcelExtract implements Downloadable {
         $to = $to->format(config('constant.dateIndexFormat'));
 
         $data = [
-            ["Job Details Report"],
+            ["Task Details Report"],
             ["{$from} - {$to}"],
             []
         ];
-        
+
         $data = array_merge($data, $timesheets->flatten(1)->values()->toArray());
-        
-        $filename = $this->setFilename('job details');
+
+        $filename = $this->setFilename('task details');
         $this->hasCustomHeader(true);
         $this->export($filename, $data);
     }
@@ -79,16 +80,15 @@ class JobDetails extends ExcelExtract implements Downloadable {
      */
     protected function getRequiredColumns(&$timesheets)
     {
-
-        $timesheets = $timesheets->groupBy('job');
-        $timesheets = $timesheets->map(function ($job) {
+        $timesheets = $timesheets->groupBy('task');
+        $timesheets = $timesheets->map(function ($task) {
             $retVal = [];
-            
-            $retVal[] = [$job->first()->job];
-            $retVal[] = ['Date', 'Employee', 'In', 'Out', 'Task', 'Break', 'Total'];
+
+            $retVal[] = [$task->first()->task];
+            $retVal[] = ['Date', 'Employee', 'In', 'Out', 'Job', 'Break', 'Total'];
 
             $grandTotal = 0;
-            $job->map(function($timesheet) use(&$retVal, &$grandTotal) {
+            $task->map(function ($timesheet) use (&$retVal, &$grandTotal) {
                 $minutesBreaktime = $timesheet->breaktime->isNotEmpty() ? $timesheet->breaktime->duration_in_minutes : 0;
                 $total_minutes = $timesheet->duration_in_minutes + $minutesBreaktime;
                 $grandTotal += $total_minutes;
@@ -105,37 +105,37 @@ class JobDetails extends ExcelExtract implements Downloadable {
             });
 
             $grandPerEmployeeTotal = 0;
-            $perEmployee = $job->groupBy('user_id');
-            $totalEmployee = $perEmployee->map(function($timesheet) use(&$grandPerEmployeeTotal) {
+            $perEmployee = $task->groupBy('user_id');
+            $totalEmployee = $perEmployee->map(function ($timesheet) use (&$grandPerEmployeeTotal) {
                 $breaktime = collect($timesheet->toArray())->pluck(['breaktime']);
                 $minutesBreaktime = $breaktime->isNotEmpty() ? $breaktime->sum('duration_in_minutes') : 0;
                 $total_minutes = $timesheet->sum('duration_in_minutes') + $minutesBreaktime;
                 $grandPerEmployeeTotal += $total_minutes;
                 return [$timesheet->first()->user->fullname, minutesToHourMinuteFormat($total_minutes)];
             });
-            
-            $grandPerTaskTotal = 0;
-            $perTask = $job->groupBy('task');
-            $totalTask = $perTask->map(function($timesheet) use(&$grandPerTaskTotal) {
+
+            $grandPerJobTotal = 0;
+            $perJob = $task->groupBy('job');
+            $totalJob = $perJob->map(function ($timesheet) use (&$grandPerJobTotal) {
                 $breaktime = collect($timesheet->toArray())->pluck(['breaktime']);
                 $minutesBreaktime = $breaktime->isNotEmpty() ? $breaktime->sum('duration_in_minutes') : 0;
                 $total_minutes = $timesheet->sum('duration_in_minutes') + $minutesBreaktime;
-                $grandPerTaskTotal += $total_minutes;
+                $grandPerJobTotal += $total_minutes;
 
-                return [$timesheet->first()->task, minutesToHourMinuteFormat($total_minutes)];
+                return [$timesheet->first()->job, minutesToHourMinuteFormat($total_minutes)];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
             });
 
             $retVal[] = ['', '', '', '', '', 'Total', minutesToHourMinuteFormat($grandTotal)];
             $retVal[] = [];
             $retVal[] = ['Employee Total'];
-            $retVal   = array_merge($retVal, $totalEmployee->toArray());
+            $retVal = array_merge($retVal, $totalEmployee->toArray());
             $retVal[] = ['Total', minutesToHourMinuteFormat($grandPerEmployeeTotal)];
             $retVal[] = [];
-            $retVal[] = ['Task Total'];
-            $retVal   = array_merge($retVal, $totalTask->toArray());
-            $retVal[] = ['Total', minutesToHourMinuteFormat($grandPerTaskTotal)];
+            $retVal[] = ['Job Total'];
+            $retVal = array_merge($retVal, $totalJob->toArray());
+            $retVal[] = ['Total', minutesToHourMinuteFormat($grandPerJobTotal)];
             $retVal[] = [];
-            
+
             return $retVal;
         });
     }
@@ -147,8 +147,8 @@ class JobDetails extends ExcelExtract implements Downloadable {
      */
     protected function fetchTimesheet(&$timesheets)
     {
-        if($this->request->has('from')) $this->from = Carbon::parse($this->request->from);
-        if($this->request->has('to')) $this->to = Carbon::parse($this->request->to);
+        if ($this->request->has('from')) $this->from = Carbon::parse($this->request->from);
+        if ($this->request->has('to')) $this->to = Carbon::parse($this->request->to);
 
         //query between date range
         $biometrics = Biometric::whereBetween('time_in', [$this->from, $this->to]);
