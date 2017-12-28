@@ -13,6 +13,9 @@ use App\BreakTime;
 use App\Rules\Within24hrs;
 use App\Rules\WithinDateTimeRange;
 use App\Clocktrack\Option;
+use App\Notif;
+use App\User;
+use App\Notifications\UnScheduledTimeReminder;
 
 class BiometricController extends Controller
 {
@@ -43,6 +46,9 @@ class BiometricController extends Controller
      */
     public function store(Request $request)
     {
+        
+        $notif = Notif::first();
+
         $dateRange = [
             "date_from" => trim("{$request->start_date} {$request->start_time}"),
             "date_to" => trim("{$request->end_date} {$request->end_time}"),
@@ -115,6 +121,18 @@ class BiometricController extends Controller
             $biometric->lat = isset($request->lat) ? $request->lat : '';
 
             $biometric->save();
+            if($notif->unscheduled_time)
+            {
+
+                $schedule = Schedule::whereUserId($employee);
+                $schedule = $schedule->whereStartDate(Carbon::now()->toDateString());
+                $schedule = $schedule->get();
+                if($schedule->isEmpty())
+                {
+                    $user = User::find($employee);
+                    Notification::send($user, new UnScheduledTimeReminder());
+                }
+            }
 
             collect($request->break_times)->map(function($bt) use($biometric) {
                 $breakTime = breakTimeFormat(

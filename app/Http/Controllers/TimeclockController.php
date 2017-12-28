@@ -11,6 +11,10 @@ use App\User;
 use Auth;
 use Carbon\Carbon;
 use App\Clocktrack\Option;
+use App\Notif;
+use App\Schedule;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\UnScheduledTimeReminder;
 
 class TimeclockController extends Controller
 {
@@ -96,6 +100,9 @@ class TimeclockController extends Controller
     }
 
     public function store(Request $request) {
+        
+        $notif = Notif::first();
+
         $this->validate(
             $request, [
                 'employees' => 'required',
@@ -136,6 +143,18 @@ class TimeclockController extends Controller
             $biometric->lat = isset($request->lat) ? $request->lat : '';
 
             $biometric->save();
+
+            if($notif->unscheduled_time)
+            {
+                $schedule = Schedule::whereUserId($employee);
+                $schedule = $schedule->whereStartDate(Carbon::now()->toDateString());
+                $schedule = $schedule->get();
+                if($schedule->isEmpty())
+                {
+                    $user = User::find($employee);
+                    Notification::send($user, new UnScheduledTimeReminder());
+                }
+            }
         });
         
         return back()->with('status', 'Added new biometric!');
