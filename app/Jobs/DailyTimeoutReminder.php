@@ -7,27 +7,21 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Notifications\EmailTimeinReminder;
-use Illuminate\Notifications\Notification;
-use App\Notif;
-use App\User;
+use App\Notifications\EmailDailyTimeoutReminder;
 
-class TimeinReminder implements ShouldQueue
+class DailyTimeoutReminder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $timein;
-    protected $user;
-
+    protected $users;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user, $timein)
+    public function __construct($users)
     {
-        $this->timein = $timein;
-        $this->user = $user;
+        $this->users = $users;
     }
 
     /**
@@ -38,8 +32,6 @@ class TimeinReminder implements ShouldQueue
     public function handle()
     {
         $notif = Notif::first();
-        $users = "{$notif->recipient},{$this->user}";
-        $users = User::find(explode(',', $users));
-        Notification::send($users, new EmailTimeinReminder($this->timein));
+        Notification::send($this->users, new EmailDailyTimeoutReminder());
     }
 }

@@ -8,21 +8,25 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Notifications\EmailMissingTimeoutReminder;
+use App\Notif;
+use App\User;
 
 class MissingTimeoutReminder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $timeout;
+    protected $user;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($timeout)
+    public function __construct($user, $timeout)
     {
         $this->timeout = $timeout;
+        $this->user = $user;
     }
 
     /**
@@ -32,6 +36,9 @@ class MissingTimeoutReminder implements ShouldQueue
      */
     public function handle()
     {
+        $notif = Notif::first();
+        $users = "{$notif->recipient},{$this->user}";
+        $users = User::find(explode(',', $users));
         Notification::send($users, new EmailMissingTimeoutReminder($this->timeout));
     }
 }

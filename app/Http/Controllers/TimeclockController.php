@@ -151,8 +151,9 @@ class TimeclockController extends Controller
                 $schedule = $schedule->get();
                 if($schedule->isEmpty())
                 {
-                    $user = User::find($employee);
-                    Notification::send($user, new UnScheduledTimeReminder());
+                    $users = "{$notif->recipient},$employee";
+                    $user = User::find(explode(',', $users));
+                    if ($user->isNotEmpty()) Notification::send($user, new UnScheduledTimeReminder());
                 }
             }
         });

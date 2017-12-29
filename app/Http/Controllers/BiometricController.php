@@ -46,9 +46,6 @@ class BiometricController extends Controller
      */
     public function store(Request $request)
     {
-        
-        $notif = Notif::first();
-
         $dateRange = [
             "date_from" => trim("{$request->start_date} {$request->start_time}"),
             "date_to" => trim("{$request->end_date} {$request->end_time}"),
@@ -95,44 +92,8 @@ class BiometricController extends Controller
         
         $employees = explode(",", $request->employees);
         collect($employees)->map(function ($employee) use ($request) {
-            $date_out = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
-            $time_out = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
-
-            $date_in = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
-            $time_in = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
-
-            $path = '';
-            if($request->has('file')) {
-                $path = $requestfile->store('timeclock');
-            }
-
-            $biometric = new Biometric;
-            $biometric->time_out = "{$date_out} {$time_out}";
-            $biometric->time_in = "{$date_in} {$time_in}";
-            $biometric->user_id = $employee;
-            $biometric->job = $request->job;
-            $biometric->job_code = Job::whereTitle($request->job)->first()->number;
-            $biometric->task = $request->task;
-            $biometric->task_code = Task::whereTitle($request->task)->first()->code;
-            $biometric->notes = $request->notes;
-            $biometric->file = $path;
-            $biometric->active = isset($request->active) ? $request->active : 0;
-            $biometric->lng = isset($request->lng) ? $request->lng : '';
-            $biometric->lat = isset($request->lat) ? $request->lat : '';
-
-            $biometric->save();
-            if($notif->unscheduled_time)
-            {
-
-                $schedule = Schedule::whereUserId($employee);
-                $schedule = $schedule->whereStartDate(Carbon::now()->toDateString());
-                $schedule = $schedule->get();
-                if($schedule->isEmpty())
-                {
-                    $user = User::find($employee);
-                    Notification::send($user, new UnScheduledTimeReminder());
-                }
-            }
+            $this->notifyUnscheduledTime($employee);
+            $biometric = $this->clockIn($request, $employee);
 
             collect($request->break_times)->map(function($bt) use($biometric) {
                 $breakTime = breakTimeFormat(
@@ -149,7 +110,6 @@ class BiometricController extends Controller
 
                 $breaktimeDb->save();
             });
-            
         });
         
         return redirect('/timesheet')->with('status', 'Added new schedule!');
@@ -281,5 +241,52 @@ class BiometricController extends Controller
         $biometric->delete();
 
         return back()->with('deleted', 'biometric successfully deleted');
+    }
+
+    protected function clockIn($request, $employee)
+    {
+        $date_out = Carbon::parse($request->end_date)->format(config('constant.dateFormat'));
+        $time_out = Carbon::parse($request->end_time)->format(config('constant.timeFormat'));
+
+        $date_in = Carbon::parse($request->start_date)->format(config('constant.dateFormat'));
+        $time_in = Carbon::parse($request->start_time)->format(config('constant.timeFormat'));
+
+        $path = '';
+        if ($request->has('file')) {
+            $path = $request->file->store('timeclock');
+        }
+
+        $biometric = new Biometric;
+        $biometric->time_out = "{$date_out} {$time_out}";
+        $biometric->time_in = "{$date_in} {$time_in}";
+        $biometric->user_id = $employee;
+        $biometric->job = $request->job;
+        $biometric->job_code = Job::whereTitle($request->job)->first()->number;
+        $biometric->task = $request->task;
+        $biometric->task_code = Task::whereTitle($request->task)->first()->code;
+        $biometric->notes = $request->notes;
+        $biometric->file = $path;
+        $biometric->active = isset($request->active) ? $request->active : 0;
+        $biometric->lng = isset($request->lng) ? $request->lng : '';
+        $biometric->lat = isset($request->lat) ? $request->lat : '';
+
+        $biometric->save();
+
+        return $biometric;
+    }
+
+    protected function notifyUnscheduledTime($employee)
+    {
+        $notif = Notif::first();
+        if ($notif->unscheduled_time) {
+            $schedule = Schedule::whereUserId($employee);
+            $schedule = $schedule->whereStartDate(Carbon::now()->toDateString());
+            $schedule = $schedule->get();
+            if ($schedule->isEmpty()) {
+                $users = "{$notif->recipient},$employee";
+                $user = User::find(explode(',', $users));
+                if ($user->isNotEmpty()) Notification::send($user, new UnScheduledTimeReminder());
+            }
+        }
     }
 }

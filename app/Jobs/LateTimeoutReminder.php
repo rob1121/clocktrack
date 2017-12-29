@@ -14,15 +14,17 @@ class LateTimeoutReminder implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $timeout;
+    protected $user;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($timeout)
+    public function __construct($user, $timeout)
     {
         $this->timeout = $timeout;
+        $this->user = $user;
     }
 
     /**
@@ -32,6 +34,9 @@ class LateTimeoutReminder implements ShouldQueue
      */
     public function handle()
     {
+        $notif = Notif::first();
+        $users = "{$notif->recipient},{$this->user}";
+        $users = User::find(explode(',', $users));
         Notification::send($users, new EmailLateTimeoutReminder($this->timeout));
     }
 }

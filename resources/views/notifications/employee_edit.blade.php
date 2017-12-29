@@ -116,9 +116,9 @@
 
             <div class="col-md-6">
                 <select name="schedule_clock_out" id="schedule_clock_out" class="form-control">
-                    <option value="15">15 Minutes Before Shift Starts</option>
-                    <option value="30">30 Minutes Before Shift Starts</option>
-                    <option value="60">1 Hour Before Shift Starts</option>
+                    <option value="15">15 Minutes Before Shift Ends</option>
+                    <option value="30">30 Minutes Before Shift Ends</option>
+                    <option value="60">1 Hour Before Shift Ends</option>
                 </select>
 
                 @if ($errors->has('schedule_clock_out'))
