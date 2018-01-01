@@ -59,42 +59,42 @@
 
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="#">
+                                <a href="{{route('api.timesheets')}}">
                                     Time Sheets
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                            <a href="{{route('api.employee_summary')}}">
                                     Employees Summary
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                            <a href="{{route('api.job_summary')}}">
                                     Job Summary
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                            <a href="{{route('api.employee_details')}}">
                                     Employees Details
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                            <a href="{{route('api.job_details')}}">
                                     Job Details
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                            <a href="{{route('api.task_details')}}">
                                     Task Details
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                            <a href="{{route('api.task_summary')}}">
                                     Task Summary
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{route('api.employee_details')}}">
                                     CSV Export
                                 </a>
                             </li>

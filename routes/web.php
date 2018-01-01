@@ -44,3 +44,4 @@ Route::resource('job','JobController',['except' => 'show']);
 
 Route::put('task/{task}/is-active', 'TaskController@isActive')->name('task.is_active');
 Route::resource('task','TaskController',['except' => 'show']);
+Route::get('extract', 'ExcelExtractController@index');
